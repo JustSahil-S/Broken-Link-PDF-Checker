@@ -1,0 +1,13 @@
+from django.db import models
+
+# Create your models here.
+class Links(models.Model):
+    url = models.URLField(max_length = 1000)
+    statusCode = models.IntegerField()
+    dismiss = models.BooleanField()
+    ignore = models.BooleanField()
+    pdfSource = models.CharField(max_length = 1000)
+    finalurl = models.URLField(max_length = 1000)
+    urlText = models.CharField(max_length = 1000)
+    lastChecked = models.DateField()
+    
