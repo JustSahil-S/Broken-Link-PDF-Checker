@@ -10,4 +10,5 @@ class Links(models.Model):
     finalurl = models.URLField(max_length = 1000)
     urlText = models.CharField(max_length = 1000)
     lastChecked = models.DateField()
+    iteration = models.IntegerField()
     
