@@ -83,8 +83,8 @@
                 <td> {{ link.pdfSource }}</td>
             </tr>
             <tr style="display: none; background-color: lightgray;" id="details{{ link.id }}">
-                <td><p>Full URL: <a href="{{ link.url }}">{{ link.url }}</a></td>
-                <td><p>Final Redirect: <a href="{{ link.finalurl }}">{{ link.finalurl }}</a></p></td>
+                <td><p>Full URL: <a href="{{ link.url }}">{{ link.url }}</a></p> <br> <p>Final Redirect: <a href="{{ link.finalurl }}">{{ link.finalurl }}</a></p></td>
+                <td></td>
                 <td><p>Last Checked: {{ link.lastChecked }} </p></td>
                 <td>
                 {% if link.dismiss == False and link.ignore == False %}
