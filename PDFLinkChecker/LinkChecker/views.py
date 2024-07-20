@@ -9,7 +9,7 @@ import requests
 import glob
 import datetime
 import os  
-import pandas as pd
+#import pandas as pd
 from django.db.models import Q
 import openpyxl
 import smtplib,ssl
@@ -62,7 +62,7 @@ def update(request):
     except:
         past_iteration = 1
     cur_iteration = past_iteration + 1                                                           
-    for file in list(glob.glob('/Users/sahilsingamsetty/work/openai/web-crawl-q-n-a/apps/web-crawl-q-and-a/pdf/www.php.com/*')):     
+    for file in list(glob.glob('./pdf/*')):     
         print(file)
         doc = fitz.open(file)
         pdf = file
