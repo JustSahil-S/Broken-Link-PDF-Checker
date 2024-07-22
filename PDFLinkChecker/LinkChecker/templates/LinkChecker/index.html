@@ -4,6 +4,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <style type="text/css">
+        #link_table td {
+            padding: 0;
+            border: 0;
+        }
+    </style>
 
   </head>
 {% block body %}
@@ -61,47 +67,66 @@
     <a type="button" class="btn btn-secondary btn-danger" href="/update" style="border-radius: 0rem;" onclick="load()"> <span class="spinner-border spinner-border-sm" id ="spinner" role="status" aria-hidden="true" style="display: none;"></span>
         Recheck All</a>
 </div>
-<table class="table table-bordered" style="margin-bottom: 0rem; width: 100%;">
+<!-- <table class="table table-bordered" style="margin-bottom: 0rem; width: 100%;">
       </tr>
     </thead>
-</table> 
-<table class="table table-bordered table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col" style="width: 35%">URL</th>
-        <th scope="col" style="width: 10%">Status</th>
-        <th scope="col" style="width: 25%">Link Text</th>
-        <th scope="col" style="width: 30%">Source</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for link in links %}
+</table>  -->
+<div id="table_container" style="border: 4px solid orange;">
+    <table class="table table-bordered table-hover" id="link_table" style="margin-bottom: 0rem; width: 100%;">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col" style="width: 35%; padding: 0; font-weight: normal; text-align: center;">URL</th>
+                <th scope="col" style="width: 10%; padding: 0; font-weight: normal; text-align: center;">Status</th>
+                <th scope="col" style="width: 25%; padding: 0; font-weight: normal; text-align: center;">Link Text</th>
+                <th scope="col" style="width: 30%; padding: 0; font-weight: normal; text-align: center;">Source</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for link in links %}
             <tr id="{{ link.id }}" onclick="expand('{{ link.id }}')">
-                <td> <p> <a href="{{ link.url }}"> {{ link.url }}</a> </p> </td>
+                <td>
+                    <p> <a href="{{ link.url }}"> {{ link.url }}</a> </p>
+                </td>
                 <td> {{ link.statusCode }}</td>
                 <td> {{ link.urlText }}</td>
                 <td> {{ link.pdfSource }}</td>
             </tr>
             <tr style="display: none; background-color: lightgray;" id="details{{ link.id }}">
-                <td><p>Full URL: <a href="{{ link.url }}">{{ link.url }}</a></p> <br> <p>Final Redirect: <a href="{{ link.finalurl }}">{{ link.finalurl }}</a></p></td>
-                <td></td>
-                <td><p>Last Checked: {{ link.lastChecked }} </p></td>
                 <td>
-                {% if link.dismiss == False and link.ignore == False %}
-                    <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Hide this link and do not report it again unless its status changes" onclick="dismissAction('{{ link.id }}')">Dismiss</button>
-                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Remove this link from the list of broken links and mark it as valid" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
-                {% endif %}
-                {% if link.dismiss == True and link.ignore == False %}
-                    <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
-                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom" title="Remove this link from the list of broken links and mark it as valid" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
-                {% endif %}
-                {% if link.dismiss == False and link.ignore == True %}
-                    <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
-                    <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Hide this link and do not report it again unless its status changes" onclick="dismissAction('{{ link.id }}')">Dismiss</button>
-                {% endif %}
+                    <p>Final Redirect: <a href="{{ link.finalurl }}">{{ link.finalurl }}</a></p>
+                    <p>Last Checked: {{ link.lastChecked }} </p>
+                    <br>
+                    {% if link.dismiss == False and link.ignore == False %}
+                    <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom"
+                        title="Hide this link and do not report it again unless its status changes"
+                        onclick="dismissAction('{{ link.id }}')">Dismiss</button>
+                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom"
+                        title="Remove this link from the list of broken links and mark it as valid"
+                        onclick="ignoreAction('{{ link.id }}')">Ignore</button>
+                    {% endif %}
+                    {% if link.dismiss == True and link.ignore == False %}
+                    <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
+                        title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
+                    <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom"
+                        title="Remove this link from the list of broken links and mark it as valid"
+                        onclick="ignoreAction('{{ link.id }}')">Ignore</button>
+                    {% endif %}
+                    {% if link.dismiss == False and link.ignore == True %}
+                    <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
+                        title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
+                    <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom"
+                        title="Hide this link and do not report it again unless its status changes"
+                        onclick="dismissAction('{{ link.id }}')">Dismiss</button>
+                    {% endif %}
+                </td>
+                <td></td>
+                <td></td>
+                <td>
                 </td>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
