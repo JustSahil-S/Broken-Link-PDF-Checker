@@ -62,7 +62,9 @@ def update(request):
     except:
         past_iteration = 1
     cur_iteration = past_iteration + 1                                                           
-    for file in list(glob.glob('./pdf/*')):     
+    for file in list(glob.iglob('./pdf/*', recursive=True)):   
+        if (os.path.isdir(file)):
+            continue  
         print(file)
         doc = fitz.open(file)
         pdf = file
@@ -170,7 +172,7 @@ def update(request):
     for row in data:
         sheet.append(row)
     # Save the workbook to a file
-    workbook.save("/Users/sahilsingamsetty/work/PHP/Broken Link PDF Checker /PDFLinkChecker/UpdateSheet.xlsx")
+    workbook.save("UpdateSheet.xlsx")
     # Print a success message
     print("Excel file created successfully!")
 
