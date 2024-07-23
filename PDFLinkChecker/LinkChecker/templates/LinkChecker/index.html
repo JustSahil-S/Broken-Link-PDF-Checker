@@ -60,17 +60,21 @@
   $('[data-toggle="tooltip"]').tooltip()
 })
 </script>
-<div class="btn-group" role="group" aria-label="Basic example" style="width: 100%;">
-    <a type="button" class="btn btn-secondary" href="/" style="border-radius: 0rem;">Broken</a>
-    <a type="button" class="btn btn-secondary" href="/dismiss">Dismissed</a>
-    <a type="button" class="btn btn-secondary" href="/ignore">Ignored</a>
-    <a type="button" class="btn btn-secondary btn-danger" href="/update" style="border-radius: 0rem;" onclick="load()"> <span class="spinner-border spinner-border-sm" id ="spinner" role="status" aria-hidden="true" style="display: none;"></span>
-        Recheck All</a>
+<div>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <span class="btn" style="margin: 0 1%;"> Select List: </span>
+        <div class="btn-group" role="group" aria-label="List Buttons">
+            <a type="button" class="btn btn-secondary" href="/" style="border-radius: 0rem;">Broken</a>
+            <a type="button" class="btn btn-secondary" href="/dismiss" style="border-radius: 0rem;">Dismissed</a>
+            <a type="button" class="btn btn-secondary" href="/ignore" style="border-radius: 0rem;">Ignored</a>
+        </div>
+        <div class="btn-group" role="group" aria-label="Action Buttons" style="margin-left: 5%;">
+            <a type="button" class="btn btn-secondary btn-danger" href="/update" style="padding-left: 20px; padding-right: 20px;" onclick="load()">
+                <span class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"
+                    style="display: none;"></span>Recheck All</a>
+        </div>
+    </div> 
 </div>
-<!-- <table class="table table-bordered" style="margin-bottom: 0rem; width: 100%;">
-      </tr>
-    </thead>
-</table>  -->
 <div id="table_container" style="border: 4px solid orange;">
     <table class="table table-bordered table-hover" id="link_table" style="margin-bottom: 0rem; width: 100%;">
         <thead class="table-dark">
