@@ -71,19 +71,25 @@
         <span class="btn" style="margin: 0 1%; border: none;"> Select List: </span>
         <ul class="nav nav-tabs" role="tablist" style="border: none;">
             {% if request.resolver_match.url_name == 'index' %}
-            <li class="nav-item"><a class="nav-link active" href="/">Broken </a></li>
+            <li class="nav-item"><a class="nav-link active" href="/" data-toggle="tooltip" data-placement="bottom"
+                title="Show links considered broken">Broken </a></li>
             {% else %}
-            <li class="nav-item"><a class="nav-link" href="/">Broken </a></li>
+            <li class="nav-item"><a class="nav-link" href="/" data-toggle="tooltip" data-placement="bottom"
+                title="Show links considered broken">Broken </a></li>
             {% endif %}
             {% if request.resolver_match.url_name == 'dismiss' %}
-            <li class="nav-item"><a class="nav-link active" href="/dismiss">Dismissed</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/dismiss" data-toggle="tooltip" data-placement="bottom"
+                        title="Show links monitored for status change">Dismissed</a></li>
             {% else %}
-            <li class="nav-item"><a class="nav-link" href="/dismiss">Dismissed</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dismiss" data-toggle="tooltip" data-placement="bottom"
+                        title="Show links monitored for status change">Dismissed</a></li>
             {% endif %}
             {% if request.resolver_match.url_name == 'ignore' %}
-            <li class="nav-item"><a class="nav-link active"  href="/ignore">Ignored</a></li>
+            <li class="nav-item"><a class="nav-link active"  href="/ignore" data-toggle="tooltip" data-placement="bottom"
+                title="Show links ignored as likely not broken">Ignored</a></li>
             {% else %}
-            <li class="nav-item"><a class="nav-link" href="/ignore">Ignored</a></li>
+            <li class="nav-item"><a class="nav-link" href="/ignore" data-toggle="tooltip" data-placement="bottom"
+                title="Show links ignored as likely not broken">Ignored</a></li>
             {% endif %}
         </ul>
 <!--         <div class="btn-group" role="group" aria-label="List Buttons">
@@ -129,14 +135,14 @@
                         title="Hide this link and do not report it again unless its status changes"
                         onclick="dismissAction('{{ link.id }}')">Dismiss</button>
                     <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom"
-                        title="Remove this link from the list of broken links and mark it as valid"
+                        title="Remove this link and mark it as not broken"
                         onclick="ignoreAction('{{ link.id }}')">Ignore</button>
                     {% endif %}
                     {% if link.dismiss == True and link.ignore == False %}
                     <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
                         title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
                     <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="bottom"
-                        title="Remove this link from the list of broken links and mark it as valid"
+                        title="Remove this link and mark it as not broken"
                         onclick="ignoreAction('{{ link.id }}')">Ignore</button>
                     {% endif %}
                     {% if link.dismiss == False and link.ignore == True %}
