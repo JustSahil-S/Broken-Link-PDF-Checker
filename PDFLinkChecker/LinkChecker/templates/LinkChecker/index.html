@@ -18,6 +18,10 @@
                 border: 0;
             }
         }
+        a[target="_blank"]::after {
+            content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+            margin: 0px 3px 0px 5px;
+        }
             
         .nav-link:active, .nav-link.active {
             background-color: orange !important;
@@ -135,7 +139,7 @@
             {% for link in links %}
             <tr id="{{ link.id }}" onclick="expand('{{ link.id }}')">
                 <td>
-                    <p> <a href="{{ link.url }}"> {{ link.url }}</a> </p>
+                    <p> <a target="_blank" href="{{ link.url }}"> {{ link.url }}</a> </p>
                 </td>
                 <td> {{ link.statusCode }}</td>
                 <td> {{ link.urlText }}</td>
@@ -143,7 +147,7 @@
             </tr>
             <tr style="display: none; background-color: lightgray;" id="details{{ link.id }}">
                 <td>
-                    <p>Final Redirect: <a href="{{ link.finalurl }}">{{ link.finalurl }}</a></p>
+                    <p>Final Redirect: <a target="_blank" href="{{ link.finalurl }}">{{ link.finalurl }}</a></p>
                     <p>Last Checked: {{ link.lastChecked }} </p>
                     {% if link.dismiss == False and link.ignore == False %}
                     <button type="button" class="btn btn-warning bt-custom" data-toggle="tooltip" data-placement="bottom"
