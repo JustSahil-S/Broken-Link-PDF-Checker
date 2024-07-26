@@ -88,7 +88,7 @@ def update(request):
                 if (link["kind"] == fitz.LINK_URI and (not link["uri"].startswith('mailto'))):
                     url = link["uri"]
                     boundingBox = 10 
-                    linkText = page.get_textbox(link["from"] + (-boundingBox -1, boundingBox, 1))
+                    linkText = page.get_textbox(link["from"] + (-boundingBox, -1, boundingBox, 1))
                     #Tries to get the URL, if it can't, assume an error with the link and it adds the link to the records via except
                     try: 
                         response = requests.head(url, allow_redirects=True) # MS: You should check ignore state before making request!  
