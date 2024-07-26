@@ -4,6 +4,7 @@ from django.db import models
 class Links(models.Model):
     url = models.URLField(max_length = 1000)
     statusCode = models.IntegerField()
+    reason = models.CharField(max_length = 40)
     dismiss = models.BooleanField()
     ignore = models.BooleanField()
     pdfSource = models.CharField(max_length = 1000)

@@ -18,6 +18,7 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from email import encoders
+from http.client import responses
 
 def index(request):
     return render(request, "LinkChecker/index.html", {
@@ -58,7 +59,7 @@ def update(request):
     urls = []
     dead_urls = []  
     try:
-        past_iteration = Links.objects.all().first().iteration
+        past_iteration = Links.objects.all().first().iteration  # MS: Why is the global iteration is stored as part of link record?
     except:
         past_iteration = 1
     cur_iteration = past_iteration + 1                                                           
@@ -77,11 +78,11 @@ def update(request):
             for link in links:
                 if (link["kind"] == fitz.LINK_URI and (not link["uri"].startswith('mailto'))):
                     url = link["uri"]
-                    x = 10 #
+                    x = 10 # MS: what is this?
                     linkText = page.get_textbox(link["from"] + (-x, -1, x, 1))
                     #Tries to get the URL, if it can't, assume an error with the link and it adds the link to the records via except
                     try: 
-                        response = requests.head(url, allow_redirects=True)
+                        response = requests.head(url, allow_redirects=True) # MS: You should check ignore state before making request!  
                         final_url = response.url
                         if (final_url != url):
                             urls.append(url+" (final url:"+final_url+")")
@@ -89,17 +90,23 @@ def update(request):
                             urls.append(url)
                         #If link is dimissed or already broken then it will do a recheck and update the data. If it's working then it will delete from records.
                         if Links.objects.filter(url = url, pdfSource = pdf).exists():
-                            obj = Links.objects.get(url = url)
+                            obj = Links.objects.get(url = url)   # MS: can it be from different pdf? as you are not using pdf to get the link!
                             obj.iteration = cur_iteration
-                            obj.save()
+                            obj.save() # MS: what does this do?
                             if not obj.ignore:
                                 #if its 200(OK), deletes from records
                                 if response.status_code == 200:
-                                    obj.delete()
+                                    obj.delete()  # MS: should we, instead keep it?
                                 #if its dimissed, check if status changes and update if true
                                 elif obj.dismiss:
+                                    try: 
+                                        reason = responses[response.status_code]
+                                    except:
+                                        response.status_code = 500
+                                        reason = responses[response.status_code]
                                     if (obj.statusCode != response.status_code or obj.finalurl != final_url):
                                         obj.statusCode = response.status_code
+                                        obj.reason = reason
                                         obj.dismiss = False 
                                         obj.finalurl = final_url  
                                         obj.lastChecked = datetime.datetime.now()
@@ -111,7 +118,13 @@ def update(request):
                                         obj.save()
                                 #If its already broken, update the record
                                 else:
+                                    try: 
+                                        reason = responses[response.status_code]
+                                    except:
+                                        response.status_code = 500
+                                        reason = responses[response.status_code]
                                     obj.statusCode = response.status_code 
+                                    obj.reason = reason
                                     obj.finalurl = final_url  
                                     obj.lastChecked = datetime.datetime.now()
                                     obj.iteration = cur_iteration
@@ -125,9 +138,16 @@ def update(request):
                             else: 
                                 dead_urls.append({ "url" : url, "status_code" : response.status_code, "reason": response.reason})
                                 if Links.objects.filter(url = url).exists() == False:
+                                    try:
+                                        reason = responses[response.status_code]
+                                    except:
+                                        response.status_code = 500
+                                        reason = responses[response.status_code]
+
                                     Links.objects.create(
                                         url = url,
                                         statusCode = response.status_code,
+                                        reason = reason,
                                         pdfSource = pdf,
                                         finalurl = url,
                                         dismiss = False,
@@ -137,11 +157,12 @@ def update(request):
                                         iteration = cur_iteration
                                     )
                     except:
-                        dead_urls.append({ "url" : url, "status_code" : 000, "reason": "Request GET Error"})
+                        dead_urls.append({ "url" : url, "status_code" : 500, "reason": responses[500]})
                         if Links.objects.filter(url = url).exists() == False:
                             Links.objects.create(
                                 url = url,
-                                statusCode = 000,
+                                statusCode = 500,
+                                reason = responses[500],
                                 pdfSource = pdf,
                                 finalurl = url,
                                 dismiss = False,
@@ -166,7 +187,7 @@ def update(request):
     data = [
         ["URL", "Status", "PDF"]]
     for link in Links.objects.filter(dismiss = False, ignore = False):
-        row = [link.url, link.statusCode, link.pdfSource]
+        row = [link.url, link.statusCode, link.reason, link.pdfSource]
         data.append(row)
         print(data)
     for row in data:
