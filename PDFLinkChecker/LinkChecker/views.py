@@ -22,15 +22,24 @@ from http.client import responses
 
 def index(request):
     return render(request, "LinkChecker/index.html", {
-        "links":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True))
+        "links":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)),
+        "brokenCount":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)).count(),
+        "dismissCount":Links.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links.objects.filter(ignore=True).count(),
     })
 def dismiss(request):
     return render(request, "LinkChecker/index.html", {
-        "links":Links.objects.filter(dismiss=True)
+        "links":Links.objects.filter(dismiss=True),
+        "brokenCount":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)).count(),
+        "dismissCount":Links.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links.objects.filter(ignore=True).count(),
     })
 def ignore(request):
     return render(request, "LinkChecker/index.html", {
-        "links":Links.objects.filter(ignore=True)
+        "links":Links.objects.filter(ignore=True),
+        "brokenCount":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)).count(),
+        "dismissCount":Links.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links.objects.filter(ignore=True).count(),
     })
 
 @csrf_exempt
@@ -78,8 +87,8 @@ def update(request):
             for link in links:
                 if (link["kind"] == fitz.LINK_URI and (not link["uri"].startswith('mailto'))):
                     url = link["uri"]
-                    x = 10 # MS: what is this?
-                    linkText = page.get_textbox(link["from"] + (-x, -1, x, 1))
+                    boundingBox = 10 
+                    linkText = page.get_textbox(link["from"] + (-boundingBox -1, boundingBox, 1))
                     #Tries to get the URL, if it can't, assume an error with the link and it adds the link to the records via except
                     try: 
                         response = requests.head(url, allow_redirects=True) # MS: You should check ignore state before making request!  
@@ -92,7 +101,7 @@ def update(request):
                         if Links.objects.filter(url = url, pdfSource = pdf).exists():
                             obj = Links.objects.get(url = url)   # MS: can it be from different pdf? as you are not using pdf to get the link!
                             obj.iteration = cur_iteration
-                            obj.save() # MS: what does this do?
+                            obj.save() 
                             if not obj.ignore:
                                 #if its 200(OK), deletes from records
                                 if response.status_code == 200:

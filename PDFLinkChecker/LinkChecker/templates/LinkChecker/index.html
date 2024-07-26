@@ -53,7 +53,12 @@
   </head>
 {% block body %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 <script>
+    var countDismiss = Number("{{ dismissCount }}")
+    var countIgnore = Number("{{ ignoreCount }}")
+    var countBroken = Number("{{ brokenCount }}")
 
     function expand(id) {
         if (document.getElementById(`details${id}`).style.display == "none") {
@@ -65,8 +70,12 @@
         }
     }
     function dismissAction(id) {
+        
         document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
+        countDismiss += 1
+        document.getElementById('nav-dismiss').innerHTML = countDismiss
+        $('a.active span')[0].innerText -= 1
         fetch(`/dismissAction/${id}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -76,6 +85,9 @@
     function ignoreAction(id) {
         document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
+        countIgnore += 1
+        document.getElementById('nav-ignore').innerHTML = countIgnore
+        $('a.active span')[0].innerText -= 1
         fetch(`/ignoreAction/${id}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -85,6 +97,9 @@
     function brokenAction(id) {
         document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
+        countBroken += 1
+        document.getElementById('nav-broken').innerHTML = countBroken
+        $('a.active span')[0].innerText -= 1
         fetch(`/brokenAction/${id}`, {
         method: 'POST',
         body: JSON.stringify({
@@ -105,24 +120,24 @@
         <ul class="nav nav-tabs" role="tablist" style="border: none;">
             {% if request.resolver_match.url_name == 'index' %}
             <li class="nav-item"><a class="nav-link active" href="/" data-toggle="tooltip" data-placement="bottom"
-                title="Show links considered broken">Broken Links <span class="badge text-bg-secondary">{{ links|length }}</span></a></li>
+                title="Show links considered broken">Broken Links <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
             {% else %}
             <li class="nav-item"><a class="nav-link" href="/" data-toggle="tooltip" data-placement="bottom"
-                title="Show links considered broken">Broken Links</a></li>
+                title="Show links considered broken">Broken Links <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
             {% endif %}
             {% if request.resolver_match.url_name == 'dismiss' %}
             <li class="nav-item"><a class="nav-link active" href="/dismiss" data-toggle="tooltip" data-placement="bottom"
-                        title="Show links monitored for status change">Dismissed Links <span class="badge text-bg-secondary">{{ links|length }}</a></li>
+                        title="Show links monitored for status change">Dismissed Links <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
             {% else %}
             <li class="nav-item"><a class="nav-link" href="/dismiss" data-toggle="tooltip" data-placement="bottom"
-                        title="Show links monitored for status change">Dismissed Links</a></li>
+                        title="Show links monitored for status change">Dismissed Links <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
             {% endif %}
             {% if request.resolver_match.url_name == 'ignore' %}
             <li class="nav-item"><a class="nav-link active"  href="/ignore" data-toggle="tooltip" data-placement="bottom"
-                title="Show links ignored as likely not broken">Ignored Links <span class="badge text-bg-secondary">{{ links|length }}</a></li>
+                title="Show links ignored as likely not broken">Ignored Links <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
             {% else %}
             <li class="nav-item"><a class="nav-link" href="/ignore" data-toggle="tooltip" data-placement="bottom"
-                title="Show links ignored as likely not broken">Ignored Links</a></li>
+                title="Show links ignored as likely not broken">Ignored Links <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
             {% endif %}
         </ul>
 <!--         <div class="btn-group" role="group" aria-label="List Buttons">
