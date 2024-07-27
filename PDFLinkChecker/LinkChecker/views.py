@@ -111,8 +111,8 @@ def update(request):
                                     try: 
                                         reason = responses[response.status_code]
                                     except:
-                                        response.status_code = 500
-                                        reason = responses[response.status_code]
+                                        #response.status_code = 500
+                                        reason = 'unknown'
                                     if (obj.statusCode != response.status_code or obj.finalurl != final_url):
                                         obj.statusCode = response.status_code
                                         obj.reason = reason
@@ -130,8 +130,8 @@ def update(request):
                                     try: 
                                         reason = responses[response.status_code]
                                     except:
-                                        response.status_code = 500
-                                        reason = responses[response.status_code]
+                                        #response.status_code = 500
+                                        reason = 'unknown'
                                     obj.statusCode = response.status_code 
                                     obj.reason = reason
                                     obj.finalurl = final_url  
@@ -150,8 +150,8 @@ def update(request):
                                     try:
                                         reason = responses[response.status_code]
                                     except:
-                                        response.status_code = 500
-                                        reason = responses[response.status_code]
+                                        #response.status_code = 500
+                                        reason = 'unknown'
 
                                     Links.objects.create(
                                         url = url,
