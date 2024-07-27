@@ -31,35 +31,70 @@ foreach pdf in pdfs:
 
     foreach link in links:
 
-	link_objs = get_link_objs_in_links_table(url = link)
+	link_objs = get_link_objs_in_links_table(url = link) ; get all the objects with this link
 
-	if (link_objs is null)
-		ret_code, log = request(url)
-		insert_link_table(url = link, source = pdf, status=ret_code, last_checked = timestamp(), last_iteration = cur_iteration, last_log = log)
+	if (link_objs is null) ; there are no objects with this link
+		status_code, log = request(url) ; make a request and collect status and logs
+		insert_link_table(url = link, source = pdf, status=status_code, last_checked = timestamp(), last_iteration = cur_iteration, last_log = log)
 		continue; to next link
-	if ( (link.objs[1].iteration == cur_iteration) or (link_objs[1].ignore == true) or (link_objs[1].status == ok) )
+	if (link.objs[1].iteration == cur_iteration)
 		my_obj = get_link_objs_in_links_table(url = link, source = pdf)
-		if my_obj does not exists:  
+		if my_obj does not exists:  ; it is a new source!
 			my_obj = clone (link_obj[1])
 			my_obj.source = pdf
+            my_obj. last_checked = timestamp()
 			insert_link_table(my_obj)
 		continue ; to next link
+    if (link_objs[1].ignore == true) {
+        foreach obj in link_objs:
+            obj.iteration = cur_iteration
+            obj. last_checked = timestamp()
+            obj.save()
+        end-foreach
+        my_obj = get_link_objs_in_links_table(url = link, source = pdf)
+		if my_obj does not exists:  ; it is a new source!
+			my_obj = clone (link_obj[1])
+			my_obj.source = pdf
+            my_obj.iteration = cur_iteration
+            link_obj. last_checked = timestamp()
+			insert_link_table(my_obj)
+        continue; to next link
+    }
 		
-	ret_code, log = request(url)
+	status_code, log = request(url)
 
-	if (link_objs is null)
-		insert_link_table(url = link, source = pdf, status=ret_code, last_checked = timestamp(), last_iteration = cur_iteration
-		continue; to next link
-	   
-	if ( (link_objs[1].dismiss == true) and (ret_code !== link_objs[1].status) ):
-		foreach link_obj in link_objs:  
-			link_obj.dismiss = false;
-			link_obj.status = ret_code;
-			link_obj.iteration = cur_iteration
-			update_link_table(link_objs)
-		continue   ; to next link
-
-     end-foreach
+    if (link_objs[1].status == status_code) {
+        foreach obj in link_objs:
+            obj.iteration = cur_iteration
+            obj. last_checked = timestamp()
+            obj.save()
+        end-foreach
+        my_obj = get_link_objs_in_links_table(url = link, source = pdf)
+		if my_obj does not exists:  ; it is a new source!
+			my_obj = clone (link_obj[1])
+			my_obj.source = pdf
+            my_obj.iteration = cur_iteration
+            my_obj.last_checked = timestamp()
+			insert_link_table(my_obj)
+    } else {
+        foreach obj in link_objs:
+            obj.iteration = cur_iteration
+            obj.last_checked = timestamp()
+            obj.status = status_code
+            obj.broken = status_code == ok? false: true
+            obj.save()
+        end-foreach
+        my_obj = get_link_objs_in_links_table(url = link, source = pdf)
+		if my_obj does not exists:  ; it is a new source!
+			my_obj = clone (link_obj[1])
+			my_obj.source = pdf
+            my_obj.iteration = cur_iteration
+            my_obj.status = status_code
+            my_obj.broken = status_code == ok? false: true
+            my_obj.last_checked = timestamp()
+			insert_link_table(my_obj)
+    }
+    end-foreach
 end-foreach
 global.iteration = cur_iteration
 
