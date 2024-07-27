@@ -1,0 +1,66 @@
+
+Tables:
+
+Global:
+————
+- iteration = 0
+
+
+Links_table:
+————
+url
+final_url
+url_anchor
+status
+source_file
+action_flags:	
+    dismiss
+    ignore
+last_checked
+last_log
+last_iteration
+
+
+cur_iteration = global.iteration+1
+
+pdfs = get_all_pdfs()
+
+foreach pdf in pdfs:
+
+    links = get_all_links(pdf)
+
+    foreach link in links:
+
+	link_objs = get_link_objs_in_links_table(url = link)
+
+	if (link_objs is null)
+		ret_code, log = request(url)
+		insert_link_table(url = link, source = pdf, status=ret_code, last_checked = timestamp(), last_iteration = cur_iteration, last_log = log)
+		continue; to next link
+	if ( (link.objs[1].iteration == cur_iteration) or (link_objs[1].ignore == true) or (link_objs[1].status == ok) )
+		my_obj = get_link_objs_in_links_table(url = link, source = pdf)
+		if my_obj does not exists:  
+			my_obj = clone (link_obj[1])
+			my_obj.source = pdf
+			insert_link_table(my_obj)
+		continue ; to next link
+		
+	ret_code, log = request(url)
+
+	if (link_objs is null)
+		insert_link_table(url = link, source = pdf, status=ret_code, last_checked = timestamp(), last_iteration = cur_iteration
+		continue; to next link
+	   
+	if ( (link_objs[1].dismiss == true) and (ret_code !== link_objs[1].status) ):
+		foreach link_obj in link_objs:  
+			link_obj.dismiss = false;
+			link_obj.status = ret_code;
+			link_obj.iteration = cur_iteration
+			update_link_table(link_objs)
+		continue   ; to next link
+
+     end-foreach
+end-foreach
+global.iteration = cur_iteration
+
+
