@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import HttpResponse
-from .models import Links
+from .models import Links, Globals, Links_table
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 import fitz
@@ -20,49 +20,241 @@ from email.utils import formatdate
 from email import encoders
 from http.client import responses
 
-def index(request):
+if (Globals.objects.all().count() == 0):
+    Globals.objects.create(iteration=0, pdfDirectory="./pdf")
+
+globals = Globals.objects.first()
+
+def broken(request):
     return render(request, "LinkChecker/index.html", {
-        "links":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)),
-        "brokenCount":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)).count(),
-        "dismissCount":Links.objects.filter(dismiss=True).count(),
-        "ignoreCount":Links.objects.filter(ignore=True).count(),
+        #"links":Links_table.objects.filter(~Q(dismiss=True), ~Q(ignore = True)),
+        "links":Links_table.objects.filter(broken=True),
+        "allCount":Links_table.objects.all().count(),
+        "brokenCount":Links_table.objects.filter(broken=True).count(),
+        "dismissCount":Links_table.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links_table.objects.filter(ignore=True).count(),
     })
+
+def all(request):
+    return render(request, "LinkChecker/index.html", {
+        "links":Links_table.objects.all(),
+        "allCount":Links_table.objects.all().count(),
+        "brokenCount":Links_table.objects.filter(broken=True).count(),
+        "dismissCount":Links_table.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links_table.objects.filter(ignore=True).count(),
+    })
+
+
+def index(request):
+    return broken(request)
+
 def dismiss(request):
     return render(request, "LinkChecker/index.html", {
-        "links":Links.objects.filter(dismiss=True),
-        "brokenCount":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)).count(),
-        "dismissCount":Links.objects.filter(dismiss=True).count(),
-        "ignoreCount":Links.objects.filter(ignore=True).count(),
+        "links":Links_table.objects.filter(dismiss=True),
+        "allCount":Links_table.objects.all().count(),
+       "brokenCount":Links_table.objects.filter(broken=True).count(),
+        "dismissCount":Links_table.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links_table.objects.filter(ignore=True).count(),
     })
 def ignore(request):
     return render(request, "LinkChecker/index.html", {
-        "links":Links.objects.filter(ignore=True),
-        "brokenCount":Links.objects.filter(~Q(dismiss=True), ~Q(ignore = True)).count(),
-        "dismissCount":Links.objects.filter(dismiss=True).count(),
-        "ignoreCount":Links.objects.filter(ignore=True).count(),
+        "links":Links_table.objects.filter(ignore=True),
+        "allCount":Links_table.objects.all().count(),
+        "brokenCount":Links_table.objects.filter(broken=True).count(),
+        "dismissCount":Links_table.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links_table.objects.filter(ignore=True).count(),
     })
 
 @csrf_exempt
 def dismissAction(request, id):
-    obj = Links.objects.get(id = id)
+    obj = Links_table.objects.get(id = id)
     obj.dismiss = True
     obj.ignore = False
     obj.save()
     return HttpResponse(status=200)
 @csrf_exempt
 def ignoreAction(request, id):
-    obj = Links.objects.get(id = id)
+    obj = Links_table.objects.get(id = id)
     obj.ignore = True
     obj.dismiss = False
     obj.save()
     return HttpResponse(status=200)
 @csrf_exempt
 def brokenAction(request, id):
-    obj = Links.objects.get(id = id)
+    obj = Links_table.objects.get(id = id)
     obj.ignore = False
     obj.dismiss = False
     obj.save()
     return HttpResponse(status=200)
+
+def get_all_pdfs():
+    # TODO: handle multiple directories
+    return list(glob.iglob(globals.pdfDirectory+"/*.pdf", recursive=True))
+
+def get_all_links(pdf):
+    # if multiple instances of a link exist, pick only the first and set moreInPdf to True
+    uniqueLinks = {}
+    doc = fitz.open(pdf)
+    for page_num in range(doc.page_count):
+        try: 
+            page = doc.load_page(page_num)
+        except:
+            continue
+    links = page.get_links()
+    for link in links:
+        if (link["kind"] == fitz.LINK_URI and (not link["uri"].startswith('mailto'))):
+            url = link["uri"]
+            print(f'        Found url:{url}')
+            if (url in uniqueLinks):
+                uniqueLinks[url]['moreInPdf'] = True
+                continue  # pick only the first
+            else:
+                uniqueLinks[url] = {"moreInPdf":False}
+                boundingBox = 10 
+                uniqueLinks[url]["linkText"] = page.get_textbox(link["from"] + (-boundingBox, -1, boundingBox, 1))
+                print(f'        unique_links: {uniqueLinks}')
+                # TODO: if link anchor is an image, set linkText as "<image>"
+
+    return uniqueLinks
+
+def make_request(url):
+    # TODO use proper request header and try different header options
+    # TODO collect logs
+    try: 
+        response = requests.head(url, allow_redirects=True)   
+    except:
+        return 500, 'Internal Server Error', url
+    
+    final_url = response.url
+    if (response.status_code != 200):
+        if (response.status_code in [301, 302]):
+            redirected_response = requests.head(final_url)
+            if (redirected_response.status_code != 200):
+                return redirected_response.status_code, redirected_response.reason, final_url
+
+    return response.status_code, response.reason, response.url
+
+def checkall_links():
+    curIteration = globals.iteration + 1
+    print(f'Processing iteration #{curIteration}')
+    pdfs = get_all_pdfs()
+
+    for pdf in pdfs:
+        if (os.path.isdir(pdf)):
+            continue
+        print(f'  Processing file {pdf}')
+
+        links = get_all_links(pdf)
+
+        for link in links:
+            print(f'    Processing url:{link}')
+            linkObjs = Links_table.objects.filter(url=link)
+
+            if (len(linkObjs) == 0):
+                #there are no objects with this link
+                statusCode, reason, finalUrl = make_request(link)
+                print('      statusCode:{statusCode}, reason:{reason}, finalUrl:{finalUrl}')
+                newObj = Links_table.objects.create(url=link, statusCode=statusCode, reason=reason, pdfSource=pdf,finalUrl=finalUrl, 
+                    lastChecked=datetime.datetime.now(), urlText=links[link]["linkText"],moreInPdf=links[link]["moreInPdf"],lastIteration=curIteration)
+                if (statusCode != 200):
+                    newObj.broken = True
+                    newObj.brokenSince = newObj.lastChecked
+                else:
+                    newObj.broken = False
+                newObj.save()
+                continue  # to next link
+
+            # createNew = (linkObjs.filter(pdfSource=pdf).count() == 0)
+            thisPdfObj = Links_table.objects.get(url=link, pdfSource=pdf)
+            linkObjsProcessed = linkObjs.filter(lastIteration__gte=curIteration)
+            
+            if (thisPdfObj == None):
+                if (len(linkObjsProcessed) > 0):
+                    # create new obj for this pdf with the same state at already processed
+                    #already processed this link
+                    linkObjsProcessed[0].pk = None
+                    linkObjsProcessed[0]._state.adding = True
+                    linkObjsProcessed[0].pdfSource = pdf
+                    linkObjsProcessed[0].urlText=links[link]["linkText"]
+                    linkObjsProcessed[0].moreInPdf=links[link]["moreInPdf"]
+                    linkObjsProcessed[0].save()
+                    continue # to next link
+                """ else :
+                    linkObjs[0].pk = None
+                    linkObjs[0]._state.adding = True
+                    linkObjs[0].pdfSource = pdf
+                    linkObjs[0].urlText=links[link]["linkText"]
+                    linkObjs[0].moreInPdf=links[link]["moreInPdf"]
+                    linkObjs[0].save()
+                continue # to next link """
+            else:
+                thisPdfObj.urlText = links[link]["linkText"]
+                thisPdfObj.moreInPdf = links[link]["moreInPdf"]
+                thisPdfObj.save();
+        
+            if (linkObjs.filter(ignore=True).count() > 0):
+                if (thisPdfObj == None):
+                    linkObjs[0].pk = None
+                    linkObjs[0]._state.adding = True
+                    linkObjs[0].pdfSource = pdf
+                    linkObjs[0].urlText=links[link]["linkText"]
+                    linkObjs[0].moreInPdf=links[link]["moreInPdf"]
+                    linkObjs[0].save()
+                Links_table.objects.filter(url=link).update(ignore=True, lastIteration=curIteration, lastChecked=datetime.datetime.now())
+                continue  # to next link
+
+            statusCode, reason, finalUrl = make_request(link)
+            print('      statusCode:{statusCode}, reason:{reason}, finalUrl:{finalUrl}')
+            if (linkObjs.filter(statusCode=statusCode).exists()):
+                if (thisPdfObj == None):
+                    linkObjs[0].pk = None
+                    linkObjs[0]._state.adding = True
+                    linkObjs[0].pdfSource = pdf
+                    linkObjs[0].urlText=links[link]["linkText"]
+                    linkObjs[0].moreInPdf=links[link]["moreInPdf"]
+                    linkObjs[0].status = statusCode
+                    linkObjs[0].reason = reason
+                    linkObjs[0].finalUrl = finalUrl
+                    linkObjs[0].save()
+                Links_table.objects.filter(url=link).update(lastIteration=curIteration, lastChecked=datetime.datetime.now())
+            else:
+                for obj in linkObjs:
+                    if (statusCode != 200):
+                        obj.broken = true
+                        if (obj.status == 200):
+                            obj.broken_since = obj.last_checked
+                    else: 
+                        obj.broken = false
+                    obj.dismiss = false #exit out of dismissed state
+                    obj.save()
+
+                if (thisPdfObj == None):
+                    obj.pk = None
+                    obj._state.adding = True
+                    obj.pdfSource = pdf
+                    obj.urlText=links[link]["linkText"]
+                    obj.moreInPdf=links[link]["moreInPdf"]
+                    obj.save()
+                Links_table.objects.filter(url=link).update(statusCode=statusCode,reason=reason,finalUrl=finalUrl,lastIteration=curIteration, 
+                    lastChecked=datetime.datetime.now())
+        # processed all links
+    # processed all pdfs
+    #delete all stale links
+    Links_table.objects.filter(lastIteration__lt=curIteration).delete()
+    globals.iteration = curIteration
+    globals.save()
+
+
+def checkall(request):
+    checkall_links()
+
+    return HttpResponseRedirect("/")
+
+                
+
+
+                
+
 #/Users/sahilsingamsetty/work/openai/web-crawl-q-n-a/apps/web-crawl-q-and-a/pdf/www.php.com/*'
 def update(request):
     urls = []
