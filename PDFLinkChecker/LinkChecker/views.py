@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.utils import OperationalError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import HttpResponse
 from .models import Links, Globals, Links_table
@@ -20,10 +21,14 @@ from email.utils import formatdate
 from email import encoders
 from http.client import responses
 
-if (Globals.objects.all().count() == 0):
-    Globals.objects.create(iteration=0, pdfDirectory="./pdf")
+try:
+    if (Globals.objects.all().count() == 0):
+        Globals.objects.create(iteration=0, pdfDirectory="./pdf")
 
-globals = Globals.objects.first()
+    globals = Globals.objects.first()
+except: 
+    pass  # happens when db doesn't exist yet, views.py should be
+          # importable without this side effect
 
 def broken(request):
     return render(request, "LinkChecker/index.html", {
@@ -165,7 +170,10 @@ def checkall_links():
                 continue  # to next link
 
             # createNew = (linkObjs.filter(pdfSource=pdf).count() == 0)
-            thisPdfObj = Links_table.objects.get(url=link, pdfSource=pdf)
+            try:
+                thisPdfObj = Links_table.objects.get(url=link, pdfSource=pdf)
+            except:
+                thisPdfObj = None
             linkObjsProcessed = linkObjs.filter(lastIteration__gte=curIteration)
             
             if (thisPdfObj == None):
