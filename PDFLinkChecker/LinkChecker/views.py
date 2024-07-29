@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.db.utils import OperationalError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import HttpResponse
-from .models import Links, Globals, Links_table
+from django.http import JsonResponse
+from .models import Links, Globals, Links_table, CheckLinkResult
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 import fitz
@@ -73,28 +74,55 @@ def ignore(request):
 @csrf_exempt
 def dismissAction(request, id):
     obj = Links_table.objects.get(id = id)
-    obj.dismiss = True
-    obj.ignore = False
-    obj.save()
+    #obj.dismiss = True
+    #obj.ignore = False
+    #obj.save()
+    Links_table.objects.filter(url=obj.url).update(dismiss=True,ignore=False);
     return HttpResponse(status=200)
 @csrf_exempt
 def ignoreAction(request, id):
     obj = Links_table.objects.get(id = id)
-    obj.ignore = True
-    obj.dismiss = False
-    obj.save()
+    #obj.ignore = True
+    #obj.dismiss = False
+    #obj.save()
+    Links_table.objects.filter(url=obj.url).update(dismiss=False,ignore=True);
     return HttpResponse(status=200)
-@csrf_exempt
+""" @csrf_exempt
 def brokenAction(request, id):
     obj = Links_table.objects.get(id = id)
     obj.ignore = False
     obj.dismiss = False
     obj.save()
     return HttpResponse(status=200)
-
+ """
 def get_all_pdfs():
     # TODO: handle multiple directories
     return list(glob.iglob(globals.pdfDirectory+"/*.pdf", recursive=True))
+
+def get_first_link_instance(check_link, pdf):
+    timesSeen = 0
+    urlAnchor = ""
+    doc = fitz.open(pdf)
+    for page_num in range(doc.page_count):
+        try: 
+            page = doc.load_page(page_num)
+        except:
+            continue
+    links = page.get_links()
+    for link in links:
+        if (link["kind"] == fitz.LINK_URI and (not link["uri"].startswith('mailto'))):
+            url = link["uri"]
+            if (url == check_link):
+                timesSeen += 1
+                if timesSeen == 1:
+                    boundingBox = 10 
+                    urlAnchor = page.get_textbox(link["from"] + (-boundingBox, -1, boundingBox, 1))
+            if timesSeen == 2:
+                break
+            else:
+                continue
+        continue
+    return timesSeen > 0, urlAnchor, timesSeen > 1
 
 def get_all_links(pdf):
     # if multiple instances of a link exist, pick only the first and set moreInPdf to True
@@ -169,14 +197,13 @@ def checkall_links():
                 newObj.save()
                 continue  # to next link
 
-            # createNew = (linkObjs.filter(pdfSource=pdf).count() == 0)
             try:
                 thisPdfObj = Links_table.objects.get(url=link, pdfSource=pdf)
             except:
                 thisPdfObj = None
-            linkObjsProcessed = linkObjs.filter(lastIteration__gte=curIteration)
             
             if (thisPdfObj == None):
+                linkObjsProcessed = linkObjs.filter(lastIteration__gte=curIteration)
                 if (len(linkObjsProcessed) > 0):
                     # create new obj for this pdf with the same state at already processed
                     #already processed this link
@@ -208,7 +235,7 @@ def checkall_links():
                     linkObjs[0].urlText=links[link]["linkText"]
                     linkObjs[0].moreInPdf=links[link]["moreInPdf"]
                     linkObjs[0].save()
-                Links_table.objects.filter(url=link).update(ignore=True, lastIteration=curIteration, lastChecked=datetime.datetime.now())
+                Links_table.objects.filter(url=link).update(ignore=True, lastIteration=curIteration)
                 continue  # to next link
 
             statusCode, reason, finalUrl = make_request(link)
@@ -258,8 +285,62 @@ def checkall(request):
 
     return HttpResponseRedirect("/")
 
-                
+@csrf_exempt
+def recheckAction(request, id):
+    try:
+        Obj = Links_table.objects.get(id = id)
+    except:
+        result =  CheckLinkResult.NO_SUCH_LINK.value
+        print(f'Record for is {id} not found!')
+        return JsonResponse({"result": result, "statusChanged": False, "delete": True})
 
+    link = Obj.url
+    pdf = Obj.pdfSource
+
+    # does pdf still exist?
+    if (os.path.isfile(pdf) == False):
+        Obj.delete()
+        result =  CheckLinkResult.NO_SUCH_PDF.value
+        print(f'pdf:{pdf} not found!')
+        return JsonResponse({"result": result, "statusChanged": False, "delete": True})
+
+    # process the pdf to check if link still exists
+    found, urlAnchor, moreInPdf = get_first_link_instance(link, pdf)
+    if (found == False):
+        Obj.delete()
+        result =  CheckLinkResult.NO_SUCH_LINK.value
+        print(f'url:{link} not found in pdf:{pdf}!')
+        return JsonResponse({"result": result, "statusChanged": False, "delete": True})
+
+    statusCode, reason, finalUrl = make_request(link)
+ 
+    if (statusCode == 200):
+        if (Obj.statusCode != statusCode):
+            Obj.statusCode = statusCode
+            Obj.broken = False
+            Obj.dismiss = False
+            Obj.ignore = False
+            Obj.urlText = urlAnchor
+            Obj.moreInPdf = moreInPdf
+            Obj.save()
+            return JsonResponse({"result": CheckLinkResult.LINK_OK.value, "statusChanged": True, "delete": False})
+        return JsonResponse({"result": CheckLinkResult.LINK_OK.value, "statusChanged": False, "delete": False})
+    else:
+        if (Obj.statusCode != statusCode):
+            Obj.dismiss = False
+            Obj.broken = True
+            Obj.statusCode = statusCode
+            Obj.urlText = urlAnchor
+            Obj.moreInPdf = moreInPdf
+            Obj.save()
+            result =  CheckLinkResult.LINK_BROKEN_STATUS_CHANGED.value
+            return JsonResponse({"result": result, "statusChanged": True, "delete": False})
+        result =  CheckLinkResult.LINK_BROKEN_SAME_STATUS.value
+    # send response back with result 
+    # result = one of (pdf does not exist, link does not exist, link ok, link broken same status, link broken status changed
+    return JsonResponse({"result": result, "statusChanged": False, "delete": False})
+
+             
 
                 
 

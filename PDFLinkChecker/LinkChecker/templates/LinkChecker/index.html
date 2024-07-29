@@ -86,30 +86,120 @@
     }
 
     function dismissAction(id) {    
-        document.getElementById(`details${id}`).style.display = "none"
+        /* document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
         countDismiss += 1
         document.getElementById('nav-dismiss').innerHTML = countDismiss
-        $('a.active span')[0].innerText -= 1
+        $('a.active span')[0].innerText -= 1 */
         fetch(`/dismissAction/${id}`, {
-        method: 'POST',
-        body: JSON.stringify({
+            method: 'POST'})
+        .then(function(res){
+            if (res.status == 200){
+                var url = $("#" + id).find('a').attr('href');
+                $("#" + id).remove();
+                $("#details" + id).hide();
+                $("#details" + id).remove();
+                countDismiss += 1;
+                $('a.active span')[0].innerText -= 1;
+                $(".url_column").each(function () {
+                    if ($(this).attr('href') == url) {
+                        var tr_id = $(this).parent().parent().parent().attr('id')
+                        $("#details" + tr_id).hide();
+                        $("#details" + tr_id).remove();
+                        $("#" + tr_id).remove();
+                        countDismiss += 1;
+                        $('a.active span')[0].innerText -= 1;
+                    }
+                })
+                $("#nav-dismiss")[0].innerHTML = countDismiss;
+            }
         })
-    })
+        .catch(error => {
+            alert('There was a problem with selected operation:', error);
+        });
     }
+
     function ignoreAction(id) {
-        document.getElementById(`details${id}`).style.display = "none"
+        /* document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
         countIgnore += 1
         document.getElementById('nav-ignore').innerHTML = countIgnore
-        $('a.active span')[0].innerText -= 1
+        $('a.active span')[0].innerText -= 1 */
         fetch(`/ignoreAction/${id}`, {
-        method: 'POST',
-        body: JSON.stringify({
+            method: 'POST'})
+        .then(function(res){
+            if (res.status == 200){
+                var url = $("#" + id).find('a').attr('href');
+                $("#" + id).remove();
+                $("#details" + id).hide();
+                $("#details" + id).remove();
+                countIgnore += 1;
+                $('a.active span')[0].innerText -= 1;
+                $(".url_column").each(function () { 
+                    if ($(this).attr('href') == url) {
+                        var tr_id = $(this).parent().parent().parent().attr('id')
+                        $("#details" + tr_id).hide();
+                        $("#details" + tr_id).remove();
+                        $("#" + tr_id).remove();
+                        countIgnore += 1;
+                        $('a.active span')[0].innerText -= 1;
+                    } 
+                })
+                $("#nav-ignore")[0].innerHTML = countIgnore;
+            }
         })
-    })
+        .catch(error => {
+            alert('There was a problem with selected operation:', error);
+        });
     }
-    function brokenAction(id) {
+
+    function recheckAction(id){
+        const CheckLinkResult = Object.freeze({
+            NO_SUCH_PDF: 1,
+            NO_SUCH_LINK : 2,
+            LINK_OK : 3,
+            LINK_BROKEN : 4,
+            LINK_BROKEN_SAME_STATUS : 5,
+            LINK_BROKEN_STATUS_CHANGED : 6,
+            LINK_NOT_PROCESSED : 7
+        });
+        fetch(`/recheckAction/${id}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('data received:', data);
+            if (data.delete) {
+                var url = $("#" + id).find('a').attr('href');
+                $("#" + id).remove();
+                $("#details" + id).hide();
+                $("#details" + id).remove();
+                $('a.active span')[0].innerText -= 1;
+                // remove any other rows with the same link
+                $(".url_column").each(function () {
+                    if ($(this).attr('href') == url) {
+                        var tr_id = $(this).parent().parent().parent().attr('id')
+                        $("#details" + tr_id).hide();
+                        $("#details" + tr_id).remove();
+                        $("#" + tr_id).remove();
+                        $('a.active span')[0].innerText -= 1;
+                    }
+                })
+                return;
+            }
+            if (data.statusChanged) {
+                location.reload();
+                return
+            }
+            alert("There was no change in the link status");
+        })
+        .catch (error => {
+            alert('There was a problem with selected operation:', error);
+        });
+
+    }
+
+/*     function brokenAction(id) {
         document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
         countBroken += 1
@@ -121,9 +211,9 @@
         })
     })
     }
+ */    
     function load() {
         document.getElementById(`spinner`).style.display = "inline-block"
-
     }
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -190,7 +280,7 @@
             {% for link in links %}
             <tr id="{{ link.id }}" onclick="expand('{{ link.id }}')">
                 <td>
-                    <p> <a target="_blank" href="{{ link.url }}"> {{ link.url }}</a> </p>
+                    <p> <a class="url_column" target="_blank" href="{{ link.url }}"> {{ link.url }}</a> </p>
                 </td>
                 <td> <p>{{ link.statusCode }}</p>
                      <p class="smallest">{{ link.reason }}</p>
@@ -209,7 +299,7 @@
                         <p>Link has been dismissed!</p>
                         {% if request.resolver_match.url_name != 'all' %}
                             <button type="button" class="btn btn-primary  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
+                                title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
                             <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Remove this link and mark it as not broken" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
                         {% endif %}
@@ -217,7 +307,7 @@
                         <p>Link has been ignored!</p>
                         {% if request.resolver_match.url_name != 'all' %}
                             <button type="button" class="btn btn-primary  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Check this link again" onclick="brokenAction('{{ link.id }}')">Recheck</button>
+                                title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
                             <button type="button" class="btn btn-warning  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Hide this link and do not report it again unless its status changes"
                                 onclick="dismissAction('{{ link.id }}')">Dismiss</button>
@@ -225,6 +315,8 @@
                     {% elif link.broken == True %}
                         <p>Link is broken!  Broken since {{ link.brokenSince }}.</p>
                         {% if request.resolver_match.url_name != 'all' %}
+                            <button type="button" class="btn btn-primary  bt-custom" data-toggle="tooltip" data-placement="bottom"
+                                title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
                             <button type="button" class="btn btn-warning bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Hide this link and do not report it again unless its status changes"
                                 onclick="dismissAction('{{ link.id }}')">Dismiss</button>
