@@ -1,5 +1,4 @@
 from django.db import models
-import datetime
 from enum import Enum
 
 class CheckLinkResult(Enum):
@@ -35,7 +34,7 @@ class Links_table(models.Model):
     broken = models.BooleanField(default=False)
     dismiss = models.BooleanField(default=False)
     ignore = models.BooleanField(default=False)
-    brokenSince = models.DateTimeField(default=datetime.datetime.now())
+    brokenSince = models.DateTimeField()
     lastChecked = models.DateTimeField()
     lastIteration = models.IntegerField(default=0)
     lastLog = models.CharField(max_length = 1000)
@@ -44,8 +43,8 @@ class Links_table(models.Model):
 class Globals (models.Model):
     iteration =  models.IntegerField(default=0)
     pdfDirectory = models.CharField(max_length = 1000)
-    checkAllNextAt = models.DateTimeField(default=datetime.datetime.now())
-    recheckIntervalDays = models.IntegerField(default=0)
-    recheckIntervalHours = models.IntegerField(default=0)
-    recheckIntervalMins = models.IntegerField(default=5)
+    checkAllStartAtHour = models.IntegerField(default=7)
+    checkAllStartAtMin = models.IntegerField(default=0)
+    checkAllIntervalHours = models.IntegerField(default=24)
+    checkAllIntervalMins = models.IntegerField(default=0)
 

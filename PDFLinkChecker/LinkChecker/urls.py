@@ -1,5 +1,13 @@
 from django.urls import path
 from . import views
+import threading
+
+
+bgnd_thread = threading.Thread(target=views.bgnd_task, args=[])
+bgnd_thread.setDaemon(True)
+bgnd_thread.start()
+
+
 
 urlpatterns = [
     path("", views.index, name="index"),

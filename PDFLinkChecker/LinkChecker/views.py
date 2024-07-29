@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.utils import OperationalError
+import pytz
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -10,17 +11,22 @@ import fitz
 import requests
 import glob
 import datetime
+import time
 import os  
 #import pandas as pd
 from django.db.models import Q
 import openpyxl
 import smtplib,ssl
+import threading
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from email import encoders
 from http.client import responses
+
+PST = pytz.timezone('US/Pacific')
+checkallLock = threading.Lock()
 
 try:
     if (Globals.objects.all().count() == 0):
@@ -137,7 +143,7 @@ def get_all_links(pdf):
     for link in links:
         if (link["kind"] == fitz.LINK_URI and (not link["uri"].startswith('mailto'))):
             url = link["uri"]
-            print(f'        Found url:{url}')
+            # print(f'        Found url:{url}')
             if (url in uniqueLinks):
                 uniqueLinks[url]['moreInPdf'] = True
                 continue  # pick only the first
@@ -145,7 +151,7 @@ def get_all_links(pdf):
                 uniqueLinks[url] = {"moreInPdf":False}
                 boundingBox = 10 
                 uniqueLinks[url]["linkText"] = page.get_textbox(link["from"] + (-boundingBox, -1, boundingBox, 1))
-                print(f'        unique_links: {uniqueLinks}')
+                # print(f'        unique_links: {uniqueLinks}')
                 # TODO: if link anchor is an image, set linkText as "<image>"
 
     return uniqueLinks
@@ -175,20 +181,20 @@ def checkall_links():
     for pdf in pdfs:
         if (os.path.isdir(pdf)):
             continue
-        print(f'  Processing file {pdf}')
+        # print(f'  Processing file {pdf}')
 
         links = get_all_links(pdf)
 
         for link in links:
-            print(f'    Processing url:{link}')
+            # print(f'    Processing url:{link}')
             linkObjs = Links_table.objects.filter(url=link)
 
             if (len(linkObjs) == 0):
                 #there are no objects with this link
                 statusCode, reason, finalUrl = make_request(link)
-                print('      statusCode:{statusCode}, reason:{reason}, finalUrl:{finalUrl}')
+                # print(f'      statusCode:{statusCode}, reason:{reason}, finalUrl:{finalUrl}')
                 newObj = Links_table.objects.create(url=link, statusCode=statusCode, reason=reason, pdfSource=pdf,finalUrl=finalUrl, 
-                    lastChecked=datetime.datetime.now(), urlText=links[link]["linkText"],moreInPdf=links[link]["moreInPdf"],lastIteration=curIteration)
+                    lastChecked=datetime.datetime.now(PST),brokenSince=datetime.datetime.now(PST),urlText=links[link]["linkText"],moreInPdf=links[link]["moreInPdf"],lastIteration=curIteration)
                 if (statusCode != 200):
                     newObj.broken = True
                     newObj.brokenSince = newObj.lastChecked
@@ -239,7 +245,7 @@ def checkall_links():
                 continue  # to next link
 
             statusCode, reason, finalUrl = make_request(link)
-            print('      statusCode:{statusCode}, reason:{reason}, finalUrl:{finalUrl}')
+            # print(f'      statusCode:{statusCode}, reason:{reason}, finalUrl:{finalUrl}')
             if (linkObjs.filter(statusCode=statusCode).exists()):
                 if (thisPdfObj == None):
                     linkObjs[0].pk = None
@@ -251,7 +257,7 @@ def checkall_links():
                     linkObjs[0].reason = reason
                     linkObjs[0].finalUrl = finalUrl
                     linkObjs[0].save()
-                Links_table.objects.filter(url=link).update(lastIteration=curIteration, lastChecked=datetime.datetime.now())
+                Links_table.objects.filter(url=link).update(lastIteration=curIteration, lastChecked=datetime.datetime.now(PST))
             else:
                 for obj in linkObjs:
                     if (statusCode != 200):
@@ -271,7 +277,7 @@ def checkall_links():
                     obj.moreInPdf=links[link]["moreInPdf"]
                     obj.save()
                 Links_table.objects.filter(url=link).update(statusCode=statusCode,reason=reason,finalUrl=finalUrl,lastIteration=curIteration, 
-                    lastChecked=datetime.datetime.now())
+                    lastChecked=datetime.datetime.now(PST))
         # processed all links
     # processed all pdfs
     #delete all stale links
@@ -280,10 +286,39 @@ def checkall_links():
     globals.save()
 
 
-def checkall(request):
-    checkall_links()
+def bgnd_task():
 
+    while True:
+        print('background task: acquiring lock')
+        checkallLock.acquire(blocking=1)
+        print(f'background task: got lock, processing at {datetime.datetime.now(PST)}')
+        checkall_links()
+        print('background task: releasing lock')
+        checkallLock.release()
+        next_at = datetime.datetime.now(PST)
+        while (True):
+            next_at = datetime.datetime(year=next_at.year, month=next_at.month, day=next_at.day, 
+                        hour=globals.checkAllStartAtHour, minute=globals.checkAllStartAtMin).replace(tzinfo=PST) + datetime.timedelta(hours=globals.checkAllIntervalHours, 
+                        minutes=globals.checkAllIntervalMins)
+
+            if (next_at > datetime.datetime.now(PST)):
+                break
+            next_at += datetime.timedelta(hours=globals.checkAllIntervalHours, minutes=globals.checkAllIntervalMins)
+
+        print(f'background task: scheduled to run again at {next_run_at}')
+        total_seconds = (next_at - datetime.datetime.now(PST)).total_seconds()
+        time.sleep(total_seconds)
+
+
+def checkall(request):
+    print('checkall request: acquiring lock')
+    checkallLock.acquire(blocking=1)
+    print(f'checkall request: got lock, processing at {datetime.datetime.now(PST)}')
+    checkall_links()
+    print('checkall request: releasing lock')
+    checkallLock.release()
     return HttpResponseRedirect("/")
+
 
 @csrf_exempt
 def recheckAction(request, id):
@@ -399,11 +434,11 @@ def update(request):
                                         obj.reason = reason
                                         obj.dismiss = False 
                                         obj.finalurl = final_url  
-                                        obj.lastChecked = datetime.datetime.now()
+                                        obj.lastChecked = datetime.datetime.now(PST)
                                         obj.iteration = cur_iteration
                                         obj.save()
                                     else:
-                                        obj.lastChecked = datetime.datetime.now()
+                                        obj.lastChecked = datetime.datetime.now(PST)
                                         obj.iteration = cur_iteration
                                         obj.save()
                                 #If its already broken, update the record
@@ -416,7 +451,7 @@ def update(request):
                                     obj.statusCode = response.status_code 
                                     obj.reason = reason
                                     obj.finalurl = final_url  
-                                    obj.lastChecked = datetime.datetime.now()
+                                    obj.lastChecked = datetime.datetime.now(PST)
                                     obj.iteration = cur_iteration
                                     obj.save()
                         #Checks for new broken links that aren't in the system
@@ -442,7 +477,7 @@ def update(request):
                                         finalurl = url,
                                         dismiss = False,
                                         ignore = False,
-                                        lastChecked = datetime.datetime.now(),
+                                        lastChecked = datetime.datetime.now(PST),
                                         urlText = linkText,
                                         iteration = cur_iteration
                                     )
@@ -457,7 +492,7 @@ def update(request):
                                 finalurl = url,
                                 dismiss = False,
                                 ignore = False,
-                                lastChecked = datetime.datetime.now(),
+                                lastChecked = datetime.datetime.now(PST),
                                 urlText = linkText,
                                 iteration = cur_iteration
                             )
