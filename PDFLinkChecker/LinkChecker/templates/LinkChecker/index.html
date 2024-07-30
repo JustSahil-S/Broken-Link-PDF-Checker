@@ -2,8 +2,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style type="text/css">
         #nav_container {
@@ -218,7 +220,7 @@
     }
     
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip({trigger:'hover'})
+        $('[data-bs-toggle="tooltip"]').tooltip({trigger:'hover'})
     })
     
 </script>
@@ -227,44 +229,44 @@
         <div id="nav_container">
             <ul class="nav nav-tabs" role="tablist" style="border: none; margin: 0 2%;">
                 {% if request.resolver_match.url_name == 'index' %}
-                <li class="nav-item"><a class="nav-link active" href="/" data-toggle="tooltip" data-placement="bottom"
-                    title="Show links considered broken">Broken Links <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
+                <li class="nav-item"><a class="nav-link active" href="/" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    data-bs-title="Show links considered broken">Broken Links <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
                 {% else %}
-                <li class="nav-item"><a class="nav-link" href="/" data-toggle="tooltip" data-placement="bottom"
-                    title="Show links considered broken">Broken Links <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    data-bs-title="Show links considered broken">Broken Links <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
                 {% endif %}
                 {% if request.resolver_match.url_name == 'dismiss' %}
-                <li class="nav-item"><a class="nav-link active" href="/dismiss" data-toggle="tooltip" data-placement="bottom"
-                            title="Show links monitored for status change">Dismissed Links <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
+                <li class="nav-item"><a class="nav-link active" href="/dismiss" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            data-bs-title="Show links monitored for status change">Dismissed Links <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
                 {% else %}
-                <li class="nav-item"><a class="nav-link" href="/dismiss" data-toggle="tooltip" data-placement="bottom"
-                            title="Show links monitored for status change">Dismissed Links <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/dismiss" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            data-bs-title="Show links monitored for status change">Dismissed Links <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
                 {% endif %}
                 {% if request.resolver_match.url_name == 'ignore' %}
-                <li class="nav-item"><a class="nav-link active"  href="/ignore" data-toggle="tooltip" data-placement="bottom"
-                    title="Show links ignored as likely not broken">Ignored Links <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
+                <li class="nav-item"><a class="nav-link active"  href="/ignore" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    data-bs-title="Show links ignored as likely not broken">Ignored Links <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
                 {% else %}
-                <li class="nav-item"><a class="nav-link" href="/ignore" data-toggle="tooltip" data-placement="bottom"
-                    title="Show links ignored as likely not broken">Ignored Links <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/ignore" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    data-bs-title="Show links ignored as likely not broken">Ignored Links <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
                 {% endif %}
                 {% if request.resolver_match.url_name == 'all' %}
-                <li class="nav-item"><a class="nav-link active" href="/all" data-toggle="tooltip" data-placement="bottom"
-                        title="Show all links">All Links <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
+                <li class="nav-item"><a class="nav-link active" href="/all" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        data-bs-title="Show all links">All Links <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
                 </li>
                 {% else %}
-                <li class="nav-item"><a class="nav-link" href="/all" data-toggle="tooltip" data-placement="bottom"
-                        title="Show all links">All Links <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
+                <li class="nav-item"><a class="nav-link" href="/all" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        data-bs-title="Show all links">All Links <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
                 </li>
                 {% endif %}
             </ul>
         </div>
         <div id="action_btn_group">
-            <button class="btn btn-danger" data-toggle="tooltip" title="Logout current user"><i class="fa-solid fa-sign-out-alt"></i></button>
-            <button class="btn btn-danger" data-toggle="tooltip" title="Show settings menu"><i class="fa-solid fa-cog"></i></button>
-            <button class="btn btn-danger" data-toggle="tooltip" title="Show user menu"><i class="fa-solid fa-user"></i></button> 
-            <a type="button" class="btn btn-danger" href="/download_excel" data-toggle="tooltip" title="Download table"><i class="fa-solid fa-download"></i></a>
+            <button class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom"><i class="fa-solid fa-sign-out-alt"></i></button>
+            <button class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom"><i class="fa-solid fa-cog"></i></button>
+            <button class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show user menu" data-bs-placement="bottom"><i class="fa-solid fa-user"></i></button> 
+            <a type="button" class="btn btn-danger" href="/download_excel" data-bs-toggle="tooltip" data-bs-title="Download table" data-bs-placement="bottom"><i class="fa-solid fa-download"></i></a>
             <a type="button" class="btn btn-danger" href="/checkall" style="padding-left: 20px; padding-right: 20px;"
-                onclick="load()"  data-toggle="tooltip" title="Scan all PDF for broken links">
+                onclick="load()"  data-bs-toggle="tooltip" data-bs-title="Scan all PDF for broken links" data-bs-placement="bottom">
                 <span class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"
                     style="display: none;"></span>Recheck All</a>
         </div>
@@ -302,30 +304,30 @@
                     {% if link.dismiss == True %}
                         <p>Link has been dismissed!</p>
                         {% if request.resolver_match.url_name != 'all' %}
-                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
-                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Remove this link and mark it as not broken" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
+                            <button type="button" class="btn btn-danger  bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
+                            <button type="button" class="btn btn-danger  bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Remove this link and mark it as not broken" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
                         {% endif %}
                     {% elif link.ignore == True %}
                         <p>Link has been ignored!</p>
                         {% if request.resolver_match.url_name != 'all' %}
-                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
-                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Hide this link and do not report it again unless its status changes"
+                            <button type="button" class="btn btn-danger  bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
+                            <button type="button" class="btn btn-danger  bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Hide this link and do not report it again unless its status changes"
                                 onclick="dismissAction('{{ link.id }}')">Dismiss</button>
                         {% endif %}
                     {% elif link.broken == True %}
                         <p>Link is broken!  Broken since {{ link.brokenSince }}.</p>
                         {% if request.resolver_match.url_name != 'all' %}
-                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
-                            <button type="button" class="btn btn-danger bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Hide this link and do not report it again unless its status changes"
+                            <button type="button" class="btn btn-danger  bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
+                            <button type="button" class="btn btn-danger bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Hide this link and do not report it again unless its status changes"
                                 onclick="dismissAction('{{ link.id }}')">Dismiss</button>
-                            <button type="button" class="btn btn-danger bt-custom" data-toggle="tooltip" data-placement="bottom"
-                                title="Remove this link and mark it as not broken" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
+                            <button type="button" class="btn btn-danger bt-custom" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="Remove this link and mark it as not broken" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
                         {% endif %}
                     {% else %}
                         <p>Link is Ok.</p>
