@@ -20,5 +20,6 @@ urlpatterns = [
     path("recheckAction/<str:id>", views.recheckAction, name="actionrecheck"),
     path("dismissAction/<str:id>", views.dismissAction, name="actiondismiss"),
     path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
-    #path("brokenAction/<str:id>", views.brokenAction, name="actionbroken")
+    path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
+    path("settings/<str:id>", views.settings, name="settings")
 ]
