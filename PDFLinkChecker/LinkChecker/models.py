@@ -47,4 +47,6 @@ class Globals (models.Model):
     checkAllStartAtMin = models.IntegerField(default=0)
     checkAllIntervalHours = models.IntegerField(default=24)
     checkAllIntervalMins = models.IntegerField(default=0)
-
+    emailNotifyOnNewLink = models.BooleanField(default=True) #when new broken link found
+    attachListToEmail = models.BooleanField(default=True)
+    emailAddress = models.CharField(max_length = 1000, default="murali@php.com")
