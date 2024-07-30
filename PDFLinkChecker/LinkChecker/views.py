@@ -406,6 +406,33 @@ def checkall(request):
     checkallLock.release()
     return HttpResponseRedirect("/")
 
+def settings(request, id):
+    object = Globals.objects.first()
+    if id == "directory":
+        object.pdfDirectory = request.POST["directory"]
+        object.save()
+        print(object.pdfDirectory)
+        return HttpResponseRedirect("/")
+    if id =="time":
+        object.checkAllStartAtHour = request.POST["hourStart"]
+        object.checkAllStartAtMin = request.POST["minStart"]
+        object.checkAllIntervalHours = request.POST["hourInterval"]
+        object.checkAllIntervalMins = request.POST["minInterval"]
+        object.save()
+        return HttpResponseRedirect("/")
+    if id =="emails":
+        if request.POST["checkAttach"] == "on":
+            object.attachListToEmail = True
+        else:
+            object.attachListToEmail = False
+        if request.POST["checkNotification"] == "on":
+            object.emailNotifyOnNewLink = True
+        else:
+            object.emailNotifyOnNewLink = False
+        object.emailAddress = request.POST["emailadd"]
+        object.save()
+        return HttpResponseRedirect("/")
+
 
 @csrf_exempt
 def recheckAction(request, id):

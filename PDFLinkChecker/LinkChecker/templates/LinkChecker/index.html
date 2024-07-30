@@ -401,40 +401,43 @@
 
     <!-- Modal content -->
     <div class="settings-content">
-      <span class="close" style="margin-right: 10px;">&times;</span>
-      <h5 style="background-color: orange; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px;">Settings: </h5>
+        <span class="close" style="margin-right: 10px;">&times;</span>
+        <h5 style="background-color: orange; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px;">Settings: </h5>
         <label for="directories" style="margin-left: 10px; padding-left: 10px; padding-bottom: 5px;"><b>Directory:</b></label>
-        <input type="text" name="directories" id="dir" style="width: 80%;">
-        <input type="submit" value="Save">
+        <form action="/settings/directory" method="post" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin-top: 1%;">
+            {% csrf_token %}
+            <input type="text" name="directory" id="dir" style="width: 80%;">
+            <input type="submit" value="Save">
+        </form>
         <hr>
-        <form action="/action_page.php" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin-top: 1%;" id="directory">
+        <form action="/settings/time" method="post" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin-top: 1%;" id="timing">
+            {% csrf_token %}
             <div style="display: inline-flex; width: 905;">
             <p style="margin-right: 10px;"><b>Start Time</b></p >
             <label for="time">Hour:</label>
-            <input type="text" id="hour" name="time" style="margin-right: 10px;">
+            <input type="text"  name="hourStart" style="margin-right: 10px;">
             <label for="time">Minute:</label>
-            <input type="text" id="minute" name="time">
+            <input type="text"  name="minStart">
             </div>
-        </form>
-         <form action="/action_page.php" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin-top: 1%;" id="timing">
             <label style="margin-right: 10px;"> <b>Interval </b> </label>
             <label>Hours: </label>
-            <input type="text" id="hour" name="time" style="margin-right: 10px;">
+            <input type="text" name="hourInterval" style="margin-right: 10px;">
             <label>Minutes:</label>
-            <input type="text" id="minute" name="time">
+            <input type="text"  name="minInterval">
             <br>
             <input type="submit" value="Save">
           </form>
         <hr>
-        <form action="/action_page.php" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin-top: 1%;" id="emails">
+        <form action="/settings/emails" method="post" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin-top: 1%;">
+            {% csrf_token %}
             <label for="interval" style="margin-right: 10px;"> <b>Enable Email Notifications </b> </label>
-            <input type="checkbox" name="checkbox" style="margin-right: 10px;">
+            <input type="checkbox" name="checkNotification" style="margin-right: 10px;" value="on">
             <br>
             <label>Email:</label>
-            <input type="text" id="emailinput">
+            <input type="text" name="emailadd">
             <br>
             <label>Attatch List</label>
-            <input type="checkbox" name="checkbox" style="margin-right: 10px;">
+            <input type="checkbox" name="checkAttach" style="margin-right: 10px;" value="on">
             <input type="submit" value="Save">
           </form>
     </div>
