@@ -19,7 +19,8 @@ urlpatterns = [
     path("download_excel", views.download_excel, name="download_excel"),
     path("recheckAction/<str:id>", views.recheckAction, name="actionrecheck"),
     path("dismissAction/<str:id>", views.dismissAction, name="actiondismiss"),
+    path("cancelDismissAction/<str:id>", views.cancelDismissAction, name="actiondismissignore"),
     path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
-    path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
+    path("cancelIgnoreAction/<str:id>", views.cancelIgnoreAction, name="actioncancelignore"),
     path("settings/<str:id>", views.settings, name="settings")
 ]

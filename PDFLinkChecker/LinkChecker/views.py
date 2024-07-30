@@ -93,6 +93,17 @@ def dismissAction(request, id):
     #obj.save()
     Links_table.objects.filter(url=obj.url).update(broken=False, dismiss=True,ignore=False);
     return HttpResponse(status=200)
+
+@csrf_exempt
+def cancelDismissAction(request, id):
+    try:
+        obj = Links_table.objects.get(id = id)
+        obj.broken = (obj.statusCode != 200)
+        Links_table.objects.filter(url=obj.url).update(broken=obj.broken, dismiss=False,ignore=False);
+        return JsonResponse({"broken": obj.broken})
+    except:
+        return HTTPResponse(status=404)
+
 @csrf_exempt
 def ignoreAction(request, id):
     obj = Links_table.objects.get(id = id)
@@ -101,14 +112,18 @@ def ignoreAction(request, id):
     #obj.save()
     Links_table.objects.filter(url=obj.url).update(broken=False, dismiss=False,ignore=True);
     return HttpResponse(status=200)
-""" @csrf_exempt
-def brokenAction(request, id):
-    obj = Links_table.objects.get(id = id)
-    obj.ignore = False
-    obj.dismiss = False
-    obj.save()
-    return HttpResponse(status=200)
- """
+
+@csrf_exempt
+def cancelIgnoreAction(request, id):
+    try:
+        obj = Links_table.objects.get(id = id)
+        obj.broken = (obj.statusCode != 200)
+        Links_table.objects.filter(url=obj.url).update(broken=obj.broken, dismiss=False,ignore=False);
+        return JsonResponse({"broken": obj.broken})
+    except:
+        return HTTPResponse(status=404)
+
+
 def get_all_pdfs():
     # TODO: handle multiple directories
     return list(glob.iglob(globals.pdfDirectory+"/*.pdf", recursive=True))
