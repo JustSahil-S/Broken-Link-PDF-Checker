@@ -84,7 +84,7 @@ def dismissAction(request, id):
     #obj.dismiss = True
     #obj.ignore = False
     #obj.save()
-    Links_table.objects.filter(url=obj.url).update(dismiss=True,ignore=False);
+    Links_table.objects.filter(url=obj.url).update(broken=False, dismiss=True,ignore=False);
     return HttpResponse(status=200)
 @csrf_exempt
 def ignoreAction(request, id):
@@ -92,7 +92,7 @@ def ignoreAction(request, id):
     #obj.ignore = True
     #obj.dismiss = False
     #obj.save()
-    Links_table.objects.filter(url=obj.url).update(dismiss=False,ignore=True);
+    Links_table.objects.filter(url=obj.url).update(broken=False, dismiss=False,ignore=True);
     return HttpResponse(status=200)
 """ @csrf_exempt
 def brokenAction(request, id):

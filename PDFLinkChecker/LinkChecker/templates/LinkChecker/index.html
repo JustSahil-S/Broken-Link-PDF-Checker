@@ -216,9 +216,11 @@
     function load() {
         document.getElementById(`spinner`).style.display = "inline-block"
     }
+    
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip({trigger:'hover'})
     })
+    
 </script>
 <div>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
@@ -300,7 +302,7 @@
                     {% if link.dismiss == True %}
                         <p>Link has been dismissed!</p>
                         {% if request.resolver_match.url_name != 'all' %}
-                            <button type="button" class="btn btn-primary  bt-custom" data-toggle="tooltip" data-placement="bottom"
+                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
                             <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Remove this link and mark it as not broken" onclick="ignoreAction('{{ link.id }}')">Ignore</button>
@@ -308,18 +310,18 @@
                     {% elif link.ignore == True %}
                         <p>Link has been ignored!</p>
                         {% if request.resolver_match.url_name != 'all' %}
-                            <button type="button" class="btn btn-primary  bt-custom" data-toggle="tooltip" data-placement="bottom"
+                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
-                            <button type="button" class="btn btn-warning  bt-custom" data-toggle="tooltip" data-placement="bottom"
+                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Hide this link and do not report it again unless its status changes"
                                 onclick="dismissAction('{{ link.id }}')">Dismiss</button>
                         {% endif %}
                     {% elif link.broken == True %}
                         <p>Link is broken!  Broken since {{ link.brokenSince }}.</p>
                         {% if request.resolver_match.url_name != 'all' %}
-                            <button type="button" class="btn btn-primary  bt-custom" data-toggle="tooltip" data-placement="bottom"
+                            <button type="button" class="btn btn-danger  bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Check this link again" onclick="recheckAction('{{ link.id }}')">Recheck</button>
-                            <button type="button" class="btn btn-warning bt-custom" data-toggle="tooltip" data-placement="bottom"
+                            <button type="button" class="btn btn-danger bt-custom" data-toggle="tooltip" data-placement="bottom"
                                 title="Hide this link and do not report it again unless its status changes"
                                 onclick="dismissAction('{{ link.id }}')">Dismiss</button>
                             <button type="button" class="btn btn-danger bt-custom" data-toggle="tooltip" data-placement="bottom"
