@@ -16,6 +16,7 @@ import os
 #import pandas as pd
 from django.db.models import Q
 import openpyxl
+from openpyxl.utils import get_column_letter
 import smtplib,ssl
 import threading
 from email.mime.multipart import MIMEMultipart
@@ -334,7 +335,7 @@ def checkall_links():
             xlsx = MIMEBase('application','vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             xlsx.set_payload(attachment.read())
             encoders.encode_base64(xlsx)
-            xlsx.add_header('Content-Disposition', 'attachment', filename="Broken PDF Links")
+            xlsx.add_header('Content-Disposition', 'attachment', filename="PDFBrokenLinks.xlsx")
             msg.attach(xlsx)
         
         server.sendmail(sender, recipients, msg.as_string())
@@ -343,6 +344,34 @@ def checkall_links():
         if (globals.attachListToEmail):
             attachment.close()
 
+def download_excel(request):
+    # Create an in-memory workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "PDF Broken Links-" + datetime.datetime.now(PST).strftime("%m_%d_%Y")
+
+    headers = ["URL", "Status Code", "Status Reason", "PDF Source"] 
+    for col_num, column_title in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    for row_num, obj in enumerate(Links_table.objects.filter(broken=True), 2):
+        row = [obj.url, obj.statusCode, obj.reason, obj.pdfSource]  
+        for col_num, cell_value in enumerate(row, 1):
+            cell = ws.cell(row=row_num, column=col_num)
+            cell.value = cell_value
+
+    # Adjust column widths
+    for col_num, column_title in enumerate(headers, 1):
+        column_letter = get_column_letter(col_num)
+        ws.column_dimensions[column_letter].width = 15
+
+    # Save the workbook to an in-memory file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="PDFBrokenLinks.xlsx"'
+    wb.save(response)
+
+    return response
 
 def bgnd_task():
 
