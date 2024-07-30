@@ -46,6 +46,7 @@ def broken(request):
         "brokenCount":Links_table.objects.filter(broken=True).count(),
         "dismissCount":Links_table.objects.filter(dismiss=True).count(),
         "ignoreCount":Links_table.objects.filter(ignore=True).count(),
+        "globals": Globals.objects.first()
     })
 
 def all(request):
@@ -55,6 +56,8 @@ def all(request):
         "brokenCount":Links_table.objects.filter(broken=True).count(),
         "dismissCount":Links_table.objects.filter(dismiss=True).count(),
         "ignoreCount":Links_table.objects.filter(ignore=True).count(),
+        "globals": Globals.objects.first()
+
     })
 
 
@@ -65,9 +68,11 @@ def dismiss(request):
     return render(request, "LinkChecker/index.html", {
         "links":Links_table.objects.filter(dismiss=True),
         "allCount":Links_table.objects.all().count(),
-       "brokenCount":Links_table.objects.filter(broken=True).count(),
+        "brokenCount":Links_table.objects.filter(broken=True).count(),
         "dismissCount":Links_table.objects.filter(dismiss=True).count(),
         "ignoreCount":Links_table.objects.filter(ignore=True).count(),
+        "globals": Globals.objects.first()
+
     })
 def ignore(request):
     return render(request, "LinkChecker/index.html", {
@@ -76,6 +81,8 @@ def ignore(request):
         "brokenCount":Links_table.objects.filter(broken=True).count(),
         "dismissCount":Links_table.objects.filter(dismiss=True).count(),
         "ignoreCount":Links_table.objects.filter(ignore=True).count(),
+        "globals": Globals.objects.first()
+
     })
 
 @csrf_exempt
@@ -421,11 +428,11 @@ def settings(request, id):
         object.save()
         return HttpResponseRedirect("/")
     if id =="emails":
-        if request.POST["checkAttach"] == "on":
+        if "checkAttach" in request.POST:
             object.attachListToEmail = True
         else:
             object.attachListToEmail = False
-        if request.POST["checkNotification"] == "on":
+        if "checkNotification" in request.POST:
             object.emailNotifyOnNewLink = True
         else:
             object.emailNotifyOnNewLink = False
