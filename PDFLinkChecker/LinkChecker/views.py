@@ -102,7 +102,7 @@ def cancelDismissAction(request, id):
         Links_table.objects.filter(url=obj.url).update(broken=obj.broken, dismiss=False,ignore=False);
         return JsonResponse({"broken": obj.broken})
     except:
-        return HTTPResponse(status=404)
+        return HttpResponse(status=404)
 
 @csrf_exempt
 def ignoreAction(request, id):
@@ -121,7 +121,7 @@ def cancelIgnoreAction(request, id):
         Links_table.objects.filter(url=obj.url).update(broken=obj.broken, dismiss=False,ignore=False);
         return JsonResponse({"broken": obj.broken})
     except:
-        return HTTPResponse(status=404)
+        return HttpResponse(status=404)
 
 
 def get_all_pdfs():
@@ -279,7 +279,7 @@ def checkall_links():
                     linkObjs[0].pdfSource = pdf
                     linkObjs[0].urlText=links[link]["linkText"]
                     linkObjs[0].moreInPdf=links[link]["moreInPdf"]
-                    linkObjs[0].status = statusCode
+                    linkObjs[0].statusCode = statusCode
                     linkObjs[0].reason = reason
                     linkObjs[0].finalUrl = finalUrl
                     linkObjs[0].save()
@@ -287,12 +287,12 @@ def checkall_links():
             else:
                 for obj in linkObjs:
                     if (statusCode != 200):
-                        obj.broken = true
-                        if (obj.status == 200):
+                        obj.broken = True
+                        if (obj.statusCode == 200):
                             obj.broken_since = obj.last_checked
                     else: 
-                        obj.broken = false
-                    obj.dismiss = false #exit out of dismissed state
+                        obj.broken = False
+                    obj.dismiss = False #exit out of dismissed state
                     obj.save()
 
                 if (thisPdfObj == None):
