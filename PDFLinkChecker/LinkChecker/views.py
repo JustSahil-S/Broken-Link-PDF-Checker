@@ -4,7 +4,7 @@ import pytz
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Links, Globals, Links_table, CheckLinkResult
+from .models import Links, Globals, Links_table, CheckLinkResult, User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 import fitz
@@ -25,6 +25,10 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 from email import encoders
 from http.client import responses
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+
 
 PST = pytz.timezone('US/Pacific')
 checkallLock = threading.Lock()
@@ -511,3 +515,43 @@ def recheckAction(request, id):
     # result = one of (pdf does not exist, link does not exist, link ok, link broken same status, link broken status changed
     return JsonResponse({"result": result, "statusChanged": False, "delete": False})
 
+def login_view(request):
+    if request.method == "POST":
+
+        # Attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        # Check if authentication successful
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "webcalendar/login.html", {
+                "message": "Invalid username and/or password."
+            })
+    else:
+        return render(request, "webcalendar/login.html")
+
+def register(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+
+        # Ensure password matches confirmation
+        password = request.POST["password"]
+        confirmation = request.POST["confirmation"]
+        if password != confirmation:
+            return HttpResponseRedirect("/register")
+ # Attempt to create new user
+        try:
+            user = User.objects.create_user(username, email, password)
+            user.save()
+
+        except IntegrityError:
+            return HttpResponseRedirect("/register")
+            
+        login(request, user)
+        return HttpResponseRedirect("/")
+    else:
+        return HttpResponseRedirect("/register")            

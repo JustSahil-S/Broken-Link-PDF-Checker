@@ -22,5 +22,8 @@ urlpatterns = [
     path("cancelDismissAction/<str:id>", views.cancelDismissAction, name="actiondismissignore"),
     path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
     path("cancelIgnoreAction/<str:id>", views.cancelIgnoreAction, name="actioncancelignore"),
-    path("settings/<str:id>", views.settings, name="settings")
+    path("settings/<str:id>", views.settings, name="settings"),
+    path("login", views.login_view, name="login"),    
+    path("register", views.register, name="register"),
+
 ]

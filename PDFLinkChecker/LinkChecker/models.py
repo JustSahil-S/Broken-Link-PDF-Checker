@@ -1,5 +1,6 @@
 from django.db import models
 from enum import Enum
+from django.contrib.auth.models import AbstractUser
 
 class CheckLinkResult(Enum):
     NO_SUCH_PDF = 1
@@ -50,3 +51,6 @@ class Globals (models.Model):
     emailNotifyOnNewLink = models.BooleanField(default=True) #when new broken link found
     attachListToEmail = models.BooleanField(default=True)
     emailAddress = models.CharField(max_length = 1000, default="murali@php.com")
+
+class User(AbstractUser):
+    pass
