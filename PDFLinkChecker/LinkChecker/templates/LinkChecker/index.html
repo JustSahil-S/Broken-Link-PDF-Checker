@@ -387,15 +387,16 @@
         <div id="action_btn_group">
             <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom" onclick="logoutAction()"><i class="fa-solid fa-sign-out-alt"></i></a>
             <button class="btn btn-danger" id="settingsButton" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom"><i class="fa-solid fa-cog"></i></button>
-            <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="User profile" data-bs-placement="bottom" href="/profile"><i class="fa-solid fa-user"></i></a> 
+            <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Manage profile" data-bs-placement="bottom" href="/profile"><i class="fa-solid fa-user"></i></a> 
+            {% if user.is_superuser %}
+                <a type="button" class="btn btn-danger" href="/manage" data-bs-toggle="tooltip" data-bs-title="Manage users"
+                    data-bs-placement="bottom"><i class="fa-solid fa-user-group"></i></a>
+            {% endif %}
             <a type="button" class="btn btn-danger" href="/download_excel" data-bs-toggle="tooltip" data-bs-title="Download table" data-bs-placement="bottom"><i class="fa-solid fa-download"></i></a>
             <a type="button" class="btn btn-danger" href="/checkall" style="padding-left: 20px; padding-right: 20px;"
                 onclick="load()"  data-bs-toggle="tooltip" data-bs-title="Scan all PDF for broken links" data-bs-placement="bottom">
                 <span class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"
                     style="display: none;"></span>Check All</a>
-            {% if user.is_superuser %}
-            <a type="button" class="btn btn-danger" href="/manage" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom"><i class="fa-solid fa-user-group"></i></a>
-            {% endif %}
         </div>
     </div> 
 </div>
@@ -479,7 +480,7 @@
     <!-- Modal content -->
     <div class="settings-content">
         <span class="cross" style="margin-right: 10px;">&times;</span>
-        <h5 style="background-color: orange; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px;">Settings: </h5>
+        <h5 style="background-color: orange; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px;">Settings </h5>
         <form action="/settings/directory" method="post" style= "padding-left:10px; padding-bottom: 10px;  margin: 35px 20px;">
             {% csrf_token %}
             <label for="directory"><b>Source Directory:</b></label>
