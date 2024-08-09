@@ -25,12 +25,14 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 from email import encoders
 from http.client import responses
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.contrib import messages
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, UserProfileForm
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 
 PST = pytz.timezone('US/Pacific')
@@ -301,7 +303,7 @@ def checkall_links():
                     if (statusCode != 200):
                         obj.broken = True
                         if (obj.statusCode == 200):
-                            obj.broken_since = obj.last_checked
+                            obj.broken_since = obj.lastChecked
                     else: 
                         obj.broken = False
                     obj.dismiss = False #exit out of dismissed state
@@ -605,6 +607,16 @@ def logout_view(request):
     #return HttpResponseRedirect('logout') 
     #return HttpResponseRedirect(reverse('LinkChecker/index.html'))
 
+@csrf_exempt
 @login_required
-def profile(request):
-    return render(request, 'LinkChecker/profile.html')
+def profile_view(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important, to keep the user logged in after password change
+            return HttpResponseRedirect("/") # Redirect to a profile page or a success page
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request, 'LinkChecker/profile.html', {'form': form})

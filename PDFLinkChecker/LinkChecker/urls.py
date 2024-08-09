@@ -6,7 +6,7 @@ import threading
 
 bgnd_thread = threading.Thread(target=views.bgnd_task, args=[])
 bgnd_thread.setDaemon(True)
-bgnd_thread.start()
+#bgnd_thread.start()
 
 
 
@@ -15,7 +15,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('profile/', views.profile, name='profile'),
+    path('profile/', views.profile_view, name='profile'),
     path("all", views.all, name="all"),
     path("dismiss", views.dismiss, name="dismiss"),
     path("ignore", views.ignore, name="ignore"),

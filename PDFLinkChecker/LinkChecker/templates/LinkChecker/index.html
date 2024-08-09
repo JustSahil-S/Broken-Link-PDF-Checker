@@ -169,6 +169,15 @@
         })
     }
 
+    function profileAction() {
+            fetch('/profile/', {
+                method: 'POST'
+            })
+            .then(function () {
+                window.location.replace("/");
+            })
+        }
+
     function cancelDismissAction(id) {
         /* document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
@@ -369,11 +378,16 @@
                 </li>
                 {% endif %}
             </ul>
+        {% if user.is_superuser %}
+            <span class="btn"><b>User:&nbsp;&nbsp;</b>{{ request.user.username }} &nbsp;(admin)</span>
+        {% else %}
+            <span class="btn"><b>User:&nbsp;&nbsp;</b>{{ request.user.username }}</span>
+        {% endif %}
         </div>
         <div id="action_btn_group">
             <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom" onclick="logoutAction()"><i class="fa-solid fa-sign-out-alt"></i></a>
             <button class="btn btn-danger" id="settingsButton" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom"><i class="fa-solid fa-cog"></i></button>
-            <button class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show user menu" data-bs-placement="bottom"><i class="fa-solid fa-user"></i></button> 
+            <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="User profile" data-bs-placement="bottom" href="/profile"><i class="fa-solid fa-user"></i></a> 
             <a type="button" class="btn btn-danger" href="/download_excel" data-bs-toggle="tooltip" data-bs-title="Download table" data-bs-placement="bottom"><i class="fa-solid fa-download"></i></a>
             <a type="button" class="btn btn-danger" href="/checkall" style="padding-left: 20px; padding-right: 20px;"
                 onclick="load()"  data-bs-toggle="tooltip" data-bs-title="Scan all PDF for broken links" data-bs-placement="bottom">
