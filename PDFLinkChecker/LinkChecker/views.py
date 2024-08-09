@@ -566,6 +566,8 @@ def recheckAction(request, id):
 
     
 def register(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/')
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -575,8 +577,7 @@ def register(request):
             return redirect('profile')  # Redirect to profile after registration
     else:
         form = UserRegisterForm()
-    return render(request, 'LinkChecker/register.html', {'form': form})
-      
+    return render(request, 'LinkChecker/register.html', {'form': form})      
 
 
 
@@ -595,7 +596,16 @@ def login_view(request):
     else:
         print('Login not a POST!')
         return render(request, 'LinkChecker/login.html')
-
+@login_required
+def manage(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/')
+    if request.method == 'GET':
+        return render(request, 'LinkChecker/manage.html', {'users': User.objects.all()})
+    if request.method == 'POST':
+        userID = request.POST['id']
+        User.objects.get(id=userID).delete()
+        return HttpResponseRedirect('/manage')
 @csrf_exempt
 @login_required
 def logout_view(request):

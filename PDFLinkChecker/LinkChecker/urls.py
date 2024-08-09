@@ -6,7 +6,7 @@ import threading
 
 bgnd_thread = threading.Thread(target=views.bgnd_task, args=[])
 bgnd_thread.setDaemon(True)
-bgnd_thread.start()
+#bgnd_thread.start()
 
 
 
@@ -30,5 +30,7 @@ urlpatterns = [
     path("settings/<str:id>", views.settings, name="settings"),
     #path("login", views.login_view, name="login"),    
     #path("register", views.register, name="register"),
+    path("manage/", views.manage, name="manage"),
+
 
 ]
