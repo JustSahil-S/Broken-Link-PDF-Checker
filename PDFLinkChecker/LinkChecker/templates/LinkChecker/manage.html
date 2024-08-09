@@ -25,11 +25,11 @@
                         {% csrf_token %}
                         <label style="display: inline-block;">{{ user.username }}</label>
                         <input type="hidden" value="{{ user.id }}" name="id" style="margin-left: 25px;">
-                        <button type="submit"  class="btn btn-danger btn-sm" value="euafo"><i class="fa-solid fa-user-minus"></i></button>
+                        <button type="submit"  class="btn btn-danger btn-sm" value="euafo"><i class="fa-solid fa-x"></i></button>
                     </form>
                     <hr>
                 {% endfor %}
-                    <a type="button" class="btn btn-danger" href="/register" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom"><i class="fa-solid fa-user-plus"></i></a>
+                    <a type="button" class="btn btn-danger" href="/register" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
                     <a type="button" class="btn btn-danger" style="float: right; margin-right: 10px;" href="/" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom">Back</a>
                 </div>
             </div>
