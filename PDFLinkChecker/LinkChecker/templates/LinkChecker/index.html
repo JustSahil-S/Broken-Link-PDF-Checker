@@ -159,6 +159,16 @@
         });
     }
 
+    function logoutAction() {
+        fetch('/logout/', {
+            method: 'POST'
+        })
+        .then(function(){
+            alert ("Successfully logged out");
+            window.location.replace("/logout");
+        })
+    }
+
     function cancelDismissAction(id) {
         /* document.getElementById(`details${id}`).style.display = "none"
         document.getElementById(id).style.display = "none"
@@ -361,7 +371,7 @@
             </ul>
         </div>
         <div id="action_btn_group">
-            <button class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom"><i class="fa-solid fa-sign-out-alt"></i></button>
+            <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom" onclick="logoutAction()"><i class="fa-solid fa-sign-out-alt"></i></a>
             <button class="btn btn-danger" id="settingsButton" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom"><i class="fa-solid fa-cog"></i></button>
             <button class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show user menu" data-bs-placement="bottom"><i class="fa-solid fa-user"></i></button> 
             <a type="button" class="btn btn-danger" href="/download_excel" data-bs-toggle="tooltip" data-bs-title="Download table" data-bs-placement="bottom"><i class="fa-solid fa-download"></i></a>

@@ -579,9 +579,31 @@ def register(request):
       
 
 
-def login_view(request):
-    return auth_views.LoginView.as_view(template_name='LinkChecker/login.html')(request)
 
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect('/')  # Redirect to home or another page after successful login
+        else:
+            # Return an 'invalid login' error message.
+            print('user authentication failed!')
+            return render(request, 'LinkChecker/login.html', {'error': 'Invalid username or password.'})
+    else:
+        print('Login not a POST!')
+        return render(request, 'LinkChecker/login.html')
+
+@csrf_exempt
+@login_required
+def logout_view(request):
+    logout(request)
+    return HttpResponse(status=200)
+    #return render(request, 'LinkChecker/logout.html')
+    #return HttpResponseRedirect('logout') 
+    #return HttpResponseRedirect(reverse('LinkChecker/index.html'))
 
 @login_required
 def profile(request):
