@@ -30,5 +30,7 @@ urlpatterns = [
     path("settings/<str:id>", views.settings, name="settings"),
     #path("login", views.login_view, name="login"),    
     #path("register", views.register, name="register"),
+    path("manage/", views.manage, name="manage"),
+
 
 ]

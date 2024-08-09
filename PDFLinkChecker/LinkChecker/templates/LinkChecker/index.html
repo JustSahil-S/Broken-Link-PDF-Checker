@@ -393,6 +393,9 @@
                 onclick="load()"  data-bs-toggle="tooltip" data-bs-title="Scan all PDF for broken links" data-bs-placement="bottom">
                 <span class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"
                     style="display: none;"></span>Check All</a>
+            {% if user.is_superuser %}
+            <a type="button" class="btn btn-danger" href="/manage" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom"><i class="fa-solid fa-user-group"></i></a>
+            {% endif %}
         </div>
     </div> 
 </div>
@@ -480,14 +483,16 @@
         <form action="/settings/directory" method="post" style= "padding-left:10px; padding-bottom: 10px;  margin: 35px 20px;">
             {% csrf_token %}
             <label for="directory"><b>Source Directory:</b></label>
-            <input type="text" name="directory" id="dir" style="width: 80%;" value={{globals.pdfDirectory}}>
-            <input class="btn btn-danger btn-sm" type="submit" value="Save" style="margin-left: 25px;">
+            <div>
+            <input type="text" class="form-control" name="directory" id="dir" style="width: 80%; display:inline-block" value={{globals.pdfDirectory}}>
+            <input class="btn btn-danger btn-sm" type="submit" value="Save" style="margin-left: 25px; display: inline-block;">
+            </div>
         </form>
         <hr>
         <form action="/settings/time" method="post" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px;  margin: 35px 20px;" id="timing">
             {% csrf_token %}
             <div style="display: inline-flex;">
-                <p style="margin-right: 10px;"><b>Check All Start Time</b></p >
+                <p style="margin-right: 10px;"><b>Check All Start Time</b></p>
                 <label for="time">Hour(0-23):</label>
                 <input type="text"  name="hourStart" value={{globals.checkAllStartAtHour}} size="2" style="margin-right: 10px;">
                 <label for="time">Minute(0-59):</label>
@@ -509,9 +514,9 @@
             {% else %}
                 <input type="checkbox" name="checkNotification" style="margin-right: 10px;" value="on">
             {% endif %}
-            <label style="margin-left: 25px;"><b>Email Address</b></label>
-            <input type="text" name="emailadd" value={{globals.emailAddress}} style="width: 30%">
-            <label style="margin-left: 25px;"><b>Attatch List</b></label>
+            <label style="margin-left: 25px; display: inline-block;"><b>Email Address:</b></label>
+            <input type="text" class="form-control" name="emailadd" value={{globals.emailAddress}} style="width: 30%; display: inline-block;">
+            <label style="margin-left: 25px;"><b>Attatch List:</b></label>
             {% if globals.attachListToEmail %}
                 <input type="checkbox" name="checkAttach" style="margin-right: 10px;" checked>
             {% else %}
