@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 import threading
 
@@ -11,6 +12,10 @@ bgnd_thread.start()
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path('register/', views.register, name='register'),
+    path('login/', auth_views.LoginView.as_view(template_name='LinkChecker/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='LinkChecker/logout.html'), name='logout'),
+    path('profile/', views.profile, name='profile'),
     path("all", views.all, name="all"),
     path("dismiss", views.dismiss, name="dismiss"),
     path("ignore", views.ignore, name="ignore"),
@@ -23,7 +28,7 @@ urlpatterns = [
     path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
     path("cancelIgnoreAction/<str:id>", views.cancelIgnoreAction, name="actioncancelignore"),
     path("settings/<str:id>", views.settings, name="settings"),
-    path("login", views.login_view, name="login"),    
-    path("register", views.register, name="register"),
+    #path("login", views.login_view, name="login"),    
+    #path("register", views.register, name="register"),
 
 ]

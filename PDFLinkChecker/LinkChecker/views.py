@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.utils import OperationalError
 import pytz
 from django.http import HttpResponse, HttpResponseRedirect
@@ -26,8 +26,11 @@ from email.utils import formatdate
 from email import encoders
 from http.client import responses
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.contrib import messages
+from .forms import UserRegisterForm
 
 
 PST = pytz.timezone('US/Pacific')
@@ -42,6 +45,7 @@ except:
     pass  # happens when db doesn't exist yet, views.py should be
           # importable without this side effect
 
+@login_required
 def broken(request):
     return render(request, "LinkChecker/index.html", {
         #"links":Links_table.objects.filter(~Q(dismiss=True), ~Q(ignore = True)),
@@ -53,6 +57,7 @@ def broken(request):
         "globals": Globals.objects.first()
     })
 
+@login_required
 def all(request):
     return render(request, "LinkChecker/index.html", {
         "links":Links_table.objects.all(),
@@ -64,10 +69,11 @@ def all(request):
 
     })
 
-
+@login_required
 def index(request):
     return broken(request)
 
+@login_required
 def dismiss(request):
     return render(request, "LinkChecker/index.html", {
         "links":Links_table.objects.filter(dismiss=True),
@@ -78,6 +84,8 @@ def dismiss(request):
         "globals": Globals.objects.first()
 
     })
+
+@login_required
 def ignore(request):
     return render(request, "LinkChecker/index.html", {
         "links":Links_table.objects.filter(ignore=True),
@@ -515,7 +523,7 @@ def recheckAction(request, id):
     # result = one of (pdf does not exist, link does not exist, link ok, link broken same status, link broken status changed
     return JsonResponse({"result": result, "statusChanged": False, "delete": False})
 
-def login_view(request):
+""" def login_view(request):
     if request.method == "POST":
 
         # Attempt to sign user in
@@ -531,9 +539,9 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "webcalendar/login.html")
+        return render(request, "webcalendar/login.html") """
 
-def register(request):
+""" def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
@@ -543,7 +551,7 @@ def register(request):
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return HttpResponseRedirect("/register")
- # Attempt to create new user
+        # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
@@ -554,4 +562,27 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect("/")
     else:
-        return HttpResponseRedirect("/register")            
+        return HttpResponseRedirect("/register")       """
+
+    
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Account created for {user.username}!')
+            return redirect('profile')  # Redirect to profile after registration
+    else:
+        form = UserRegisterForm()
+    return render(request, 'LinkChecker/register.html', {'form': form})
+      
+
+
+def login_view(request):
+    return auth_views.LoginView.as_view(template_name='LinkChecker/login.html')(request)
+
+
+@login_required
+def profile(request):
+    return render(request, 'LinkChecker/profile.html')
