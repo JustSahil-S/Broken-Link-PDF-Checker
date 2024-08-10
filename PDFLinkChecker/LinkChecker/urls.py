@@ -6,7 +6,7 @@ import threading
 
 bgnd_thread = threading.Thread(target=views.bgnd_task, args=[])
 bgnd_thread.setDaemon(True)
-#bgnd_thread.start()
+bgnd_thread.start()
 
 
 
@@ -19,7 +19,6 @@ urlpatterns = [
     path("all", views.all, name="all"),
     path("dismiss", views.dismiss, name="dismiss"),
     path("ignore", views.ignore, name="ignore"),
-    #path("update", views.update, name="update"),
     path("checkall", views.checkall, name="checkall"),
     path("download_excel", views.download_excel, name="download_excel"),
     path("recheckAction/<str:id>", views.recheckAction, name="actionrecheck"),
@@ -28,9 +27,5 @@ urlpatterns = [
     path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
     path("cancelIgnoreAction/<str:id>", views.cancelIgnoreAction, name="actioncancelignore"),
     path("settings/<str:id>", views.settings, name="settings"),
-    #path("login", views.login_view, name="login"),    
-    #path("register", views.register, name="register"),
     path("manage/", views.manage, name="manage"),
-
-
 ]
