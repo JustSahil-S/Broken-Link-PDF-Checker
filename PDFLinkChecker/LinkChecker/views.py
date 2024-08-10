@@ -566,7 +566,7 @@ def recheckAction(request, id):
     else:
         return HttpResponseRedirect("/register")       """
 
-    
+@login_required    
 def register(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/')
