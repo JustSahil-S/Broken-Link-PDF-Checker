@@ -20,9 +20,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
         crossorigin="anonymous"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
 
     <!-- The Modal -->
     <div class="modal" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
@@ -37,7 +34,7 @@
                         {% csrf_token %}
                         <label style="display: inline-block; width: 25rem;">{{ user.username }}</label>
                         <input type="hidden" value="{{ user.id }}" name="id">
-                        <button type="submit"  class="btn btn-danger btn-sm" value="euafo"><i class="fa-solid fa-x"></i></button>
+                        <button type="submit"  class="btn btn-danger btn-sm" value="euafo" data-toggle="tooltip" data-title="Remove user" data-placement="bottom"><i class="fa-solid fa-x"></i></button>
                     </form>
                     <hr>
                 {% endfor %}
