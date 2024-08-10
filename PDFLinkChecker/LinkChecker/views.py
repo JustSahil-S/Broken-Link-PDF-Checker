@@ -574,9 +574,9 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            #login(request, user)
             messages.success(request, f'Account created for {user.username}!')
-            return redirect('profile')  # Redirect to profile after registration
+            return redirect('manage')  # Redirect to profile after registration
     else:
         form = UserRegisterForm()
     return render(request, 'LinkChecker/register.html', {'form': form})      
@@ -603,7 +603,7 @@ def manage(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/')
     if request.method == 'GET':
-        return render(request, 'LinkChecker/manage.html', {'users': User.objects.all()})
+        return render(request, 'LinkChecker/manage.html', {'users': User.objects.filter(~Q(username=request.user.username))})
     if request.method == 'POST':
         userID = request.POST['id']
         User.objects.get(id=userID).delete()
