@@ -1,0 +1,19 @@
+
+.tooltip {
+    z-index: 100000000 !important;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background-color: orange;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px;
+}
+
+.modal-body .btn-secondary {
+    float:inline-end;
+}

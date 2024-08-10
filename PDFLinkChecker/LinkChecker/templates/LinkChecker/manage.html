@@ -7,30 +7,42 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'LinkChecker/modal.css' %}">
 
 </head>
 
 <body>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
 
     <!-- The Modal -->
     <div class="modal" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
         <div class="modal-dialog" role="document">
-            <div class="modal-content" style="border-radius: 10px;">
-                <div class="modal-header" style="background-color: orange; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px;">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title" id="loginModalLabel">Manage Users</h5>
                 </div>
                 <div class="modal-body">
                 {% for user in users %}
                     <form action="{% url 'manage' %}" method="post">
                         {% csrf_token %}
-                        <label style="display: inline-block;">{{ user.username }}</label>
-                        <input type="hidden" value="{{ user.id }}" name="id" style="margin-left: 25px;">
+                        <label style="display: inline-block; width: 25rem;">{{ user.username }}</label>
+                        <input type="hidden" value="{{ user.id }}" name="id">
                         <button type="submit"  class="btn btn-danger btn-sm" value="euafo"><i class="fa-solid fa-x"></i></button>
                     </form>
                     <hr>
                 {% endfor %}
-                    <a type="button" class="btn btn-danger" href="/register" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
-                    <a type="button" class="btn btn-secondary" style="float: right; margin-right: 10px;" href="/" data-bs-toggle="tooltip" data-bs-title="User Management" data-bs-placement="bottom">Close</a>
+                    <a type="button" class="btn btn-danger" href="/register" data-toggle="tooltip" data-title="Create new user" data-placement="bottom"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
+                    <a type="button" class="btn btn-secondary" href="/">Close</a>
                 </div>
             </div>
         </div>
@@ -38,11 +50,7 @@
     <script>
         window.onload = function () {
             $('#loginModal').modal({ backdrop: 'static', keyboard: false });
+            $('[data-toggle="tooltip"]').tooltip({trigger: 'hover' });
         };
     </script>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
