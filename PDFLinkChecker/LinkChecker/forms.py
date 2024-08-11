@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import get_user_model
+from .models import Globals
 
 User = get_user_model()
 
@@ -55,3 +56,42 @@ class UserProfileForm(forms.ModelForm):
             user.save()
 
         return user
+
+
+from django import forms
+from .models import Globals
+
+
+
+class SettingsForm(forms.ModelForm):
+    class Meta:
+        model = Globals
+        fields = [
+            'pdfDirectory', 'checkAllStartAtHour', 'checkAllStartAtMin',
+            'checkAllIntervalHours', 'checkAllIntervalMins', 'emailNotifyOnNewLink',
+            'emailAddress', 'attachListToEmail'
+        ]
+        labels = {
+            'pdfDirectory': 'Source Directory',
+            'checkAllStartAtHour': 'Check All Start Hour',
+            'checkAllStartAtMin': 'Check All Start Minute',
+            'checkAllIntervalHours': 'Check All Interval Hours',
+            'checkAllIntervalMins': 'Check All Interval Minutes',
+            'emailNotifyOnNewLink':'Send Email On Finding New Broken Links',
+            'emailAddress':'Email Address',
+            'attachListToEmail':'Attach List'
+        }
+        help_texts = {
+            'checkAllStartAtHour': '(Valid range 0-23)',
+            'checkAllStartAtMin': '(Valid range 0-59)'
+        }
+        widgets = {
+            'pdfDirectory': forms.TextInput(attrs={'class': 'form-control'}),
+            'checkAllStartAtHour': forms.NumberInput(attrs={'class': 'form-control'}),
+            'checkAllStartAtMin': forms.NumberInput(attrs={'class': 'form-control'}),
+            'checkAllIntervalHours': forms.NumberInput(attrs={'class': 'form-control'}),
+            'checkAllIntervalMins': forms.NumberInput(attrs={'class': 'form-control'}),
+            'emailNotifyOnNewLink': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'attachListToEmail': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'emailAddress': forms.EmailInput(attrs={'class': 'form-control'}),
+        }

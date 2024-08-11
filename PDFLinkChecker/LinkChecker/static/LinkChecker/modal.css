@@ -17,3 +17,8 @@
 .modal-body .btn-secondary {
     float:inline-end;
 }
+
+.modal-body .form-check-input {
+    margin-left: 0.75rem;
+}
+

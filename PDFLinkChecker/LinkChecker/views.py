@@ -630,3 +630,21 @@ def profile_view(request):
         form = PasswordChangeForm(request.user)
     
     return render(request, 'LinkChecker/profile.html', {'form': form})
+
+
+from django.shortcuts import get_object_or_404
+from .forms import SettingsForm
+@csrf_exempt
+@login_required
+def settings_view(request):
+    globals_instance = get_object_or_404(Globals, pk=1)
+    
+    if request.method == 'POST':
+        form = SettingsForm(request.POST, instance=globals_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('globals_detail', pk=globals_instance.pk)  # Redirect to a detail view or another page
+    else:
+        form = SettingsForm(instance=globals_instance)
+    
+    return render(request, 'LinkChecker/settings.html', {'form': form})

@@ -325,24 +325,7 @@
     $(function () {
         $('[data-bs-toggle="tooltip"]').tooltip({trigger:'hover'})
     })
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var settings_model = document.getElementById("settingsPopout");
-        document.getElementById("settingsButton").onclick = function() {
-            settings_model.style.display = "block";
-        }
-    
-        document.getElementsByClassName("cross")[0].onclick = function() {
-            settings_model.style.display = "none";
-        }
-        // When the user clicks anywhere outside of the settings_model, close it
-        window.onclick = function(event) {
-            if (event.target == settings_model) {
-                settings_model.style.display = "none";
-            }
-        }
-    })
-</script>
+ </script>
 <div>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div id="nav_container">
@@ -386,7 +369,7 @@
         </div>
         <div id="action_btn_group">
             <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom" onclick="logoutAction()"><i class="fa-solid fa-sign-out-alt"></i></a>
-            <button class="btn btn-danger" id="settingsButton" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom"><i class="fa-solid fa-cog"></i></button>
+            <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom" href="/settings"><i class="fa-solid fa-cog"></i></button>
             <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Manage profile" data-bs-placement="bottom" href="/profile"><i class="fa-solid fa-user"></i></a> 
             {% if user.is_superuser %}
                 <a type="button" class="btn btn-danger" href="/manage" data-bs-toggle="tooltip" data-bs-title="Manage users"
@@ -474,59 +457,4 @@
         </tbody>
     </table>
 </div>
-
-<div id="settingsPopout" class="settingsPopoutClass">
-
-    <!-- Modal content -->
-    <div class="settings-content">
-        <span class="cross" style="margin-right: 10px;">&times;</span>
-        <h5 style="background-color: orange; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px;">Settings </h5>
-        <form action="/settings/directory" method="post" style= "padding-left:10px; padding-bottom: 10px;  margin: 35px 20px;">
-            {% csrf_token %}
-            <label for="directory"><b>Source Directory:</b></label>
-            <div>
-            <input type="text" class="form-control" name="directory" id="dir" style="width: 80%; display:inline-block" value={{globals.pdfDirectory}}>
-            <input class="btn btn-danger btn-sm" type="submit" value="Save" style="margin-left: 25px; display: inline-block;">
-            </div>
-        </form>
-        <hr>
-        <form action="/settings/time" method="post" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px;  margin: 35px 20px;" id="timing">
-            {% csrf_token %}
-            <div style="display: inline-flex;">
-                <p style="margin-right: 10px;"><b>Check All Start Time</b></p>
-                <label for="time">Hour(0-23):</label>
-                <input type="text"  name="hourStart" value={{globals.checkAllStartAtHour}} size="2" style="margin-right: 10px;">
-                <label for="time">Minute(0-59):</label>
-                <input type="text"  name="minStart" value={{globals.checkAllStartAtMin}}  size="2">
-            </div>
-            <label style="margin-right: 10px; margin-left: 25px;"> <b>Check All Interval </b> </label>
-            <label>Hours: </label>
-            <input type="text" name="hourInterval" style="margin-right: 10px;" size="2" value={{globals.checkAllIntervalHours}}>
-            <label>Minutes:</label>
-            <input type="text"  name="minInterval" value={{globals.checkAllIntervalMins}}  size="2" >
-            <input class="btn btn-danger btn-sm" type="submit" value="Save" style="margin-left: 25px;">
-          </form>
-        <hr>
-        <form action="/settings/emails" method="post" style="margin-left: 10px; padding-left: 10px; padding-bottom: 10px; margin: 35px 20px;">
-            {% csrf_token %}
-            <label for="interval" style="margin-right: 10px;"> <b>Enable Email Notifications</b> </label>
-            {% if globals.emailNotifyOnNewLink %}
-                <input type="checkbox" name="checkNotification" style="margin-right: 10px;" checked>
-            {% else %}
-                <input type="checkbox" name="checkNotification" style="margin-right: 10px;" value="on">
-            {% endif %}
-            <label style="margin-left: 25px; display: inline-block;"><b>Email Address:</b></label>
-            <input type="text" class="form-control" name="emailadd" value={{globals.emailAddress}} style="width: 30%; display: inline-block;">
-            <label style="margin-left: 25px;"><b>Attatch List:</b></label>
-            {% if globals.attachListToEmail %}
-                <input type="checkbox" name="checkAttach" style="margin-right: 10px;" checked>
-            {% else %}
-                <input type="checkbox" name="checkAttach" style="margin-right: 10px;" value="on">
-            {% endif %}
-            <input class="btn btn-danger btn-sm" type="submit" value="Save" style="margin-left: 25px;">
-          </form>
-    </div>
-  
-  </div>
-
 {% endblock %}
