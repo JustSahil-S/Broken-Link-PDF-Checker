@@ -73,17 +73,13 @@ class SettingsForm(forms.ModelForm):
         ]
         labels = {
             'pdfDirectory': 'Source Directory',
-            'checkAllStartAtHour': 'Check All Start Hour',
-            'checkAllStartAtMin': 'Check All Start Minute',
+            'checkAllStartAtHour': 'Check All Start Hour (valid range 0-23)',
+            'checkAllStartAtMin': 'Check All Start Minute (valid range 0-59)',
             'checkAllIntervalHours': 'Check All Interval Hours',
             'checkAllIntervalMins': 'Check All Interval Minutes',
-            'emailNotifyOnNewLink':'Send Email On Finding New Broken Links',
-            'emailAddress':'Email Address',
+            'emailNotifyOnNewLink':'Email Notification On New Broken Links',
+            'emailAddress':'Notification Email Address',
             'attachListToEmail':'Attach List'
-        }
-        help_texts = {
-            'checkAllStartAtHour': '(Valid range 0-23)',
-            'checkAllStartAtMin': '(Valid range 0-59)'
         }
         widgets = {
             'pdfDirectory': forms.TextInput(attrs={'class': 'form-control'}),
