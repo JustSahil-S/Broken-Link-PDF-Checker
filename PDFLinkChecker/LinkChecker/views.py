@@ -432,7 +432,7 @@ def bgnd_task():
         total_seconds = (next_at - datetime.datetime.now(PST)).total_seconds()
         time.sleep(total_seconds)
 
-
+@login_required 
 def checkall(request):
     print('checkall request: acquiring lock')
     checkallLock.acquire(blocking=1)
@@ -442,6 +442,7 @@ def checkall(request):
     checkallLock.release()
     return HttpResponseRedirect("/")
 
+@login_required 
 def settings(request, id):
     object = Globals.objects.first()
     if id == "directory":
@@ -470,7 +471,7 @@ def settings(request, id):
         return HttpResponseRedirect("/")
 
 
-@csrf_exempt
+@login_required 
 def recheckAction(request, id):
     try:
         Obj = Links_table.objects.get(id = id)
@@ -525,47 +526,6 @@ def recheckAction(request, id):
     # result = one of (pdf does not exist, link does not exist, link ok, link broken same status, link broken status changed
     return JsonResponse({"result": result, "statusChanged": False, "delete": False})
 
-""" def login_view(request):
-    if request.method == "POST":
-
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(request, "webcalendar/login.html", {
-                "message": "Invalid username and/or password."
-            })
-    else:
-        return render(request, "webcalendar/login.html") """
-
-""" def register(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
-
-        # Ensure password matches confirmation
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return HttpResponseRedirect("/register")
-        # Attempt to create new user
-        try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
-
-        except IntegrityError:
-            return HttpResponseRedirect("/register")
-            
-        login(request, user)
-        return HttpResponseRedirect("/")
-    else:
-        return HttpResponseRedirect("/register")       """
-
 @login_required    
 def register(request):
     if not request.user.is_superuser:
@@ -617,7 +577,6 @@ def logout_view(request):
     #return HttpResponseRedirect('logout') 
     #return HttpResponseRedirect(reverse('LinkChecker/index.html'))
 
-@csrf_exempt
 @login_required
 def profile_view(request):
     if request.method == 'POST':
