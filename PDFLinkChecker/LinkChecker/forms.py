@@ -58,10 +58,6 @@ class UserProfileForm(forms.ModelForm):
         return user
 
 
-from django import forms
-from .models import Globals
-
-
 
 class SettingsForm(forms.ModelForm):
     class Meta:
@@ -90,4 +86,26 @@ class SettingsForm(forms.ModelForm):
             'emailNotifyOnNewLink': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'attachListToEmail': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'emailAddress': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+
+class SmtpSettingsForm(forms.ModelForm):
+    class Meta:
+        model = Globals
+        fields = [
+            'fromEmail', 'smtpHost', 'smtpPort', 'smtpUsername', 'smtpPassword'
+        ]
+        labels = {
+            'fromEmail': 'From Email',
+            'smtpHost': 'SMTP Host',
+            'smtpPort': 'STMP Port',
+            'smtpUsername': 'SMTP Username',
+            'smtpPassword': 'SMTP Password'
+        }
+        widgets = {
+            'fromEmail': forms.TextInput(attrs={'class': 'form-control'}),
+            'smtpPort': forms.NumberInput(attrs={'class': 'form-control'}),
+            'smtpHost': forms.TextInput(attrs={'class': 'form-control'}),
+            'smtpUsername': forms.TextInput(attrs={'class': 'form-control'}),
+            'smtpPassword': forms.TextInput(attrs={'class': 'form-control'}),
         }

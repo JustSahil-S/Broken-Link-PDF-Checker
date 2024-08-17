@@ -18,6 +18,11 @@
     float:inline-end;
 }
 
+.modal-body .btn-link {
+    text-decoration: underline;
+    margin-bottom: 1.5rem;
+}
+
 .modal-body .form-check-input {
     margin-left: 0.75rem;
 }

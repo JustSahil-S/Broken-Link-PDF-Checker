@@ -51,6 +51,12 @@ class Globals (models.Model):
     emailNotifyOnNewLink = models.BooleanField(default=True) #when new broken link found
     attachListToEmail = models.BooleanField(default=True)
     emailAddress = models.CharField(max_length = 1000, default="murali@php.com")
+    fromEmail= models.CharField(max_length=100, default="murali.singamsetty@gmail.com")
+    smtpHost = models.CharField(max_length=100, default="smtp.gmail.com")
+    smtpPort = models.IntegerField(default=587)
+    smtpEncryption = models.CharField(max_length=20, default="tls")
+    smtpUsername = models.CharField(max_length=50, default="murali.singamsetty@gmail.com")
+    smtpPassword = models.CharField(max_length=50, default="ysxyoczkwjzmswiu")
 
 class User(AbstractUser):
     pass

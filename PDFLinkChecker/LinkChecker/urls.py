@@ -17,6 +17,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
     path('settings/', views.settings_view, name='settings'),
+    path('smtpsettings/', views.smtpSettings_view, name='smtpsettings'),
     path("all", views.all, name="all"),
     path("dismiss", views.dismiss, name="dismiss"),
     path("ignore", views.ignore, name="ignore"),
