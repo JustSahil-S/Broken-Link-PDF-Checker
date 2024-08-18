@@ -36,7 +36,57 @@
                 <div class="modal-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Please correct the errors below.
+                        </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <b>{{ form.fromEmail.label_tag }}</b>
+                            {{ form.fromEmail }}
+                            {% if form.fromEmail.errors %}
+                            <div class="text-danger">
+                                {{ form.fromEmail.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.smtpHost.label_tag }}</b>
+                            {{ form.smtpHost }}
+                            {% if form.smtpHost.errors %}
+                            <div class="text-danger">
+                                {{ form.smtpHost.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.smtpPort.label_tag }}</b>
+                            {{ form.smtpPort }}
+                            {% if form.smtpPort.errors %}
+                            <div class="text-danger">
+                                {{ form.smtpPort.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.smtpUsername.label_tag }}</b>
+                            {{ form.smtpUsername }}
+                            {% if form.smtpUsername.errors %}
+                            <div class="text-danger">
+                                {{ form.smtpUsername.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.smtpPassword.label_tag }}</b>
+                            {{ form.smtpPassword }}
+                            {% if form.smtpPassword.errors %}
+                            <div class="text-danger">
+                                {{ form.smtpPassword.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
                         <button type="submit" class="btn btn-danger">Save Changes</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"
                             onclick="javascript:window.location='/settings'">Close</button>
