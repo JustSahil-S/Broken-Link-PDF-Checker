@@ -65,7 +65,7 @@ class SettingsForm(forms.ModelForm):
         fields = [
             'pdfDirectory', 'checkAllStartAtHour', 'checkAllStartAtMin',
             'checkAllIntervalHours', 'checkAllIntervalMins', 'emailNotifyOnNewLink',
-            'emailAddress', 'attachListToEmail'
+            'sendToEmails', 'attachListToEmail',
         ]
         labels = {
             'pdfDirectory': 'Source Directory',
@@ -74,8 +74,8 @@ class SettingsForm(forms.ModelForm):
             'checkAllIntervalHours': 'Check All Interval Hours',
             'checkAllIntervalMins': 'Check All Interval Minutes',
             'emailNotifyOnNewLink':'Email Notification On New Broken Links',
-            'emailAddress':'Notification Email Address',
-            'attachListToEmail':'Attach List'
+            'sendToEmails': 'Send Email Notification To (comma separated email addresses)',
+            'attachListToEmail':'Attach List',
         }
         widgets = {
             'pdfDirectory': forms.TextInput(attrs={'class': 'form-control'}),
@@ -85,7 +85,7 @@ class SettingsForm(forms.ModelForm):
             'checkAllIntervalMins': forms.NumberInput(attrs={'class': 'form-control'}),
             'emailNotifyOnNewLink': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'attachListToEmail': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'emailAddress': forms.EmailInput(attrs={'class': 'form-control'}),
+            'sendToEmails': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 

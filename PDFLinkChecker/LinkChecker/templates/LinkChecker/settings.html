@@ -35,14 +35,90 @@
                 <div class="modal-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
-                    <div>
-                        <button type="button" class="btn btn-link" 
-                            onclick="javascript:window.location='/smtpsettings'">Advanced Settings</button>
-                    </div>
-                    <button type="submit" class="btn btn-danger">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                        onclick="javascript:window.location='/'">Close</button>
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Please correct the errors below.
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <b>{{ form.pdfDirectory.label_tag }}</b>
+                            {{ form.pdfDirectory }}
+                            {% if form.pdfDirectory.errors %}
+                            <div class="text-danger">
+                                {{ form.pdfDirectory.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.checkAllStartAtHour.label_tag }}</b>
+                            {{ form.checkAllStartAtHour }}
+                            {% if form.checkAllStartAtHour.errors %}
+                            <div class="text-danger">
+                                {{ form.checkAllStartAtHour.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.checkAllStartAtMin.label_tag }}</b>
+                            {{ form.checkAllStartAtMin }}
+                            {% if form.checkAllStartAtMin.errors %}
+                            <div class="text-danger">
+                                {{ form.checkAllStartAtMin.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.checkAllIntervalHours.label_tag }}</b>
+                            {{ form.checkAllIntervalHours }}
+                            {% if form.checkAllIntervalHours.errors %}
+                            <div class="text-danger">
+                                {{ form.checkAllIntervalHours.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.checkAllIntervalMins.label_tag }}</b>
+                            {{ form.checkAllIntervalMins }}
+                            {% if form.checkAllIntervalMins.errors %}
+                            <div class="text-danger">
+                                {{ form.checkAllIntervalMins.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-check">
+                            <b>{{ form.emailNotifyOnNewLink.label_tag }}</b>
+                            {{ form.emailNotifyOnNewLink }}
+                            {% if form.emailNotifyOnNewLink.errors %}
+                            <div class="text-danger">
+                                {{ form.emailNotifyOnNewLink.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <b>{{ form.sendToEmails.label_tag }}</b>
+                            {{ form.sendToEmails }}
+                            {% if form.sendToEmails.errors %}
+                            <div class="text-danger">
+                                {{ form.sendToEmails.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-check">
+                            <b>{{ form.attachListToEmail.label_tag }}</b>
+                            {{ form.attachListToEmail }}
+                            {% if form.attachListToEmail.errors %}
+                            <div class="text-danger">
+                                {{ form.attachListToEmail.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-link" 
+                                onclick="javascript:window.location='/smtpsettings'">Advanced Settings</button>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            onclick="javascript:window.location='/'">Close</button>
                     </form>
                 </div>
             </div>

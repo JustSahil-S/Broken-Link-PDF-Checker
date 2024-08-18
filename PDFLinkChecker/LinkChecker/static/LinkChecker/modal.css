@@ -23,6 +23,10 @@
     margin-bottom: 1.5rem;
 }
 
+.modal-body .form-check {
+    padding-left: 0px;
+    margin-bottom: 1rem;
+}
 .modal-body .form-check-input {
     margin-left: 0.75rem;
 }

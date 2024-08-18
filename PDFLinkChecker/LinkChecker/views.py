@@ -349,33 +349,31 @@ def checkall_links():
             print("Excel file created successfully!")
 
         # send e-mail
-        msg = MIMEMultipart()
-        #sender='murali.singamsetty@gmail,com'
-        #server=smtplib.SMTP('smtp.gmail.com', 587)
         server=smtplib.SMTP(globals.smtpHost, globals.smtpPort)
         server.starttls()
         server.login("murali.singamsetty@gmail.com", "ysxyoczkwjzmswiu")
         server.login(globals.smtpUsername, globals.smtpPassword)
-        msg['Subject']='PDF Broken Link Report'
-        msg['From']=globals.fromEmail
-        msg['To']=globals.emailAddress
-        mail_body = """\
-            This is an automated report, sent from PDF Broken Link Checker.
-            
-            To disable email notifications, see click Settings on PDF Broken Link Checker
+        for to_email in globals.sendToEmails.split(','):
+            msg = MIMEMultipart()
+            msg['Subject']='PDF Broken Link Report'
+            msg['From']=globals.fromEmail
+            msg['To'] = to_email
+            mail_body = """\
+                This is an automated report, sent from PDF Broken Link Checker.
+                
+                To disable email notifications, click <Settings> on PDF Broken Link Checker
 
-            """
-        msg.attach(MIMEText(mail_body, "plain"))
-        if (globals.attachListToEmail):
-            print(f'adding attachment to email')
-            attachment = open(attachmentFile, 'rb')
-            xlsx = MIMEBase('application','vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            xlsx.set_payload(attachment.read())
-            encoders.encode_base64(xlsx)
-            xlsx.add_header('Content-Disposition', 'attachment', filename="PDFBrokenLinks.xlsx")
-            msg.attach(xlsx)
-        
-        server.sendmail(globals.fromEmail, globals.emailAddress, msg.as_string())
+                """
+            msg.attach(MIMEText(mail_body, "plain"))
+            if (globals.attachListToEmail):
+                print(f'adding attachment to email')
+                attachment = open(attachmentFile, 'rb')
+                xlsx = MIMEBase('application','vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                xlsx.set_payload(attachment.read())
+                encoders.encode_base64(xlsx)
+                xlsx.add_header('Content-Disposition', 'attachment', filename="PDFBrokenLinks.xlsx")
+                msg.attach(xlsx)
+            server.sendmail(globals.fromEmail, to_email, msg.as_string())
         print(f'sent email')
         server.quit()
         if (globals.attachListToEmail):
