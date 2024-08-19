@@ -369,7 +369,9 @@
         </div>
         <div id="action_btn_group">
             <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Logout current user" data-bs-placement="bottom" onclick="logoutAction()"><i class="fa-solid fa-sign-out-alt"></i></a>
-            <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom" href="/settings"><i class="fa-solid fa-cog"></i></button>
+            {% if user.is_superuser %}
+                <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Show settings menu" data-bs-placement="bottom" href="/settings"><i class="fa-solid fa-cog"></i></button>
+            {% endif %}
             <a type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-title="Manage profile" data-bs-placement="bottom" href="/profile"><i class="fa-solid fa-user"></i></a> 
             {% if user.is_superuser %}
                 <a type="button" class="btn btn-danger" href="/manage" data-bs-toggle="tooltip" data-bs-title="Manage users"
