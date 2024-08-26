@@ -31,3 +31,11 @@
     margin-left: 0.75rem;
 }
 
+.toggle-password-eye {
+    float: right;
+    top: -25px;
+    right: 10px;
+    position: relative;
+    cursor: pointer;
+}
+

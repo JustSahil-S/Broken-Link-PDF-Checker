@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Settings</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bootstrap CSS -->
     {% load static %}
     <link rel="stylesheet" href="{% static 'LinkChecker/modal.css' %}">
@@ -99,6 +100,23 @@
         window.onload = function () {
             $('#smtpSettingsModal').modal({ backdrop: 'static', keyboard: false });
             $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
+            const togglePasswordEye = '<i class="fa fa-eye toggle-password-eye"></i>';
+            const togglePasswordEyeSlash = '<i class="fa fa-eye-slash toggle-password-eye"></i>';
+
+            $(togglePasswordEyeSlash).insertAfter('input[type=password]');
+            $('input[type=password]').addClass('hidden-pass-input')
+
+            $('body').on('click', '.toggle-password-eye', function (e) {
+                let password = $(this).prev('.hidden-pass-input');
+
+                if (password.attr('type') === 'password') {
+                    password.attr('type', 'text');
+                    $(this).addClass('fa-eye').removeClass('fa-eye-slash');
+                } else {
+                    password.attr('type', 'password');
+                    $(this).addClass('fa-eye-slash').removeClass('fa-eye');
+                }
+            })
         };
     </script>
 </body>

@@ -107,5 +107,5 @@ class SmtpSettingsForm(forms.ModelForm):
             'smtpPort': forms.NumberInput(attrs={'class': 'form-control'}),
             'smtpHost': forms.TextInput(attrs={'class': 'form-control'}),
             'smtpUsername': forms.TextInput(attrs={'class': 'form-control'}),
-            'smtpPassword': forms.TextInput(attrs={'class': 'form-control'}),
+            'smtpPassword': forms.PasswordInput(render_value = True, attrs={'class': 'form-control', 'placeholder':'********','autocomplete': 'off'}),
         }
