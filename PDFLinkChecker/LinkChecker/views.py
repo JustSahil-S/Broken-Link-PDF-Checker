@@ -210,8 +210,7 @@ def make_request(url):
 
     return response.status_code, response.reason, response.url
 
-def checkall_links():
-    curIteration = globals.iteration + 1
+def checkall_links(curIteration):
     newBrokenLinksFound = False
     print(f'Processing iteration #{curIteration}')
     pdfs = get_all_pdfs()
@@ -414,7 +413,13 @@ def bgnd_task():
         print('background task: acquiring lock')
         checkallLock.acquire(blocking=1)
         print(f'background task: got lock, processing at {datetime.datetime.now(PST)}')
-        checkall_links()
+        try:
+            current = globals.iteration + 1
+        except:
+            checkallLock.release()
+            return
+
+        checkall_links(current)
         print('background task: releasing lock')
         checkallLock.release()
         next_at = datetime.datetime.now(PST)
@@ -436,7 +441,11 @@ def checkall(request):
     print('checkall request: acquiring lock')
     checkallLock.acquire(blocking=1)
     print(f'checkall request: got lock, processing at {datetime.datetime.now(PST)}')
-    checkall_links()
+    try:
+        current = globals.iteration + 1
+        checkall_links(current)
+    except:            
+        pass
     print('checkall request: releasing lock')
     checkallLock.release()
     return HttpResponseRedirect("/")
