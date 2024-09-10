@@ -38,14 +38,13 @@ from django.contrib.auth.forms import PasswordChangeForm
 PST = pytz.timezone('US/Pacific')
 checkallLock = threading.Lock()
 
+
 try:
     if (Globals.objects.all().count() == 0):
         Globals.objects.create(iteration=0, pdfDirectory="./pdf")
-
-    globals = Globals.objects.first()
-except: 
-    pass  # happens when db doesn't exist yet, views.py should be
-          # importable without this side effect
+except:
+    pass # happens when db doesn't exist yet, views.py should be
+        # importable without this side effect
 
 @login_required
 def broken(request):
@@ -139,7 +138,7 @@ def cancelIgnoreAction(request, id):
 
 
 def get_all_pdfs():
-    # TODO: handle multiple directories
+    globals = Globals.objects.first()
     return list(glob.iglob(globals.pdfDirectory+"/*.pdf", recursive=True))
 
 def get_first_link_instance(check_link, pdf):
@@ -322,6 +321,7 @@ def checkall_links(curIteration):
     print(' Done!')
     #delete all stale links
     Links_table.objects.filter(lastIteration__lt=curIteration).delete()
+    globals = Globals.objects.first()
     globals.iteration = curIteration
     globals.save()
 
@@ -414,16 +414,20 @@ def bgnd_task():
         checkallLock.acquire(blocking=1)
         print(f'background task: got lock, processing at {datetime.datetime.now(PST)}')
         try:
+            globals = Globals.objects.first()
             current = globals.iteration + 1
         except:
+            print('background task: releasing lock')
             checkallLock.release()
-            return
+            time.sleep(2)
+            continue
 
         checkall_links(current)
         print('background task: releasing lock')
         checkallLock.release()
         next_at = datetime.datetime.now(PST)
         while (True):
+            globals = Globals.objects.first()
             next_at = datetime.datetime(year=next_at.year, month=next_at.month, day=next_at.day, 
                         hour=globals.checkAllStartAtHour, minute=globals.checkAllStartAtMin).replace(tzinfo=PST) + datetime.timedelta(hours=globals.checkAllIntervalHours, 
                         minutes=globals.checkAllIntervalMins)
@@ -442,6 +446,7 @@ def checkall(request):
     checkallLock.acquire(blocking=1)
     print(f'checkall request: got lock, processing at {datetime.datetime.now(PST)}')
     try:
+        globals = Globals.objects.first()
         current = globals.iteration + 1
         checkall_links(current)
     except:            
