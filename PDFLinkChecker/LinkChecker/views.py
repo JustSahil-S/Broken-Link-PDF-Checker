@@ -139,7 +139,7 @@ def cancelIgnoreAction(request, id):
 
 def get_all_pdfs():
     globals = Globals.objects.first()
-    return list(glob.iglob(globals.pdfDirectory+"/*.pdf", recursive=True))
+    return list(glob.iglob(globals.pdfDirectory+"/*", recursive=True))
 
 def get_first_link_instance(check_link, pdf):
     timesSeen = 0
@@ -209,6 +209,12 @@ def make_request(url):
 
     return response.status_code, response.reason, response.url
 
+def is_pdf(file_path):
+    with open(file_path, 'rb') as file:
+        # Read the first 4 bytes
+        header = file.read(4)
+        return header == b'%PDF'
+
 def checkall_links(curIteration):
     newBrokenLinksFound = False
     print(f'Processing iteration #{curIteration}')
@@ -217,6 +223,11 @@ def checkall_links(curIteration):
     for pdf in pdfs:
         if (os.path.isdir(pdf)):
             continue
+
+        if not is_pdf(pdf):
+            #print(f'Skipping non PDF! file: {pdf}')
+            continue
+
         # print(f'  Processing file {pdf}')
         print('+', end="", flush=True)
         links = get_all_links(pdf)
@@ -416,8 +427,8 @@ def bgnd_task():
         try:
             globals = Globals.objects.first()
             current = globals.iteration + 1
-        except:
-            print('background task: releasing lock')
+        except Exception as e:
+            print('background task: got exception: {e}, releasing lock')
             checkallLock.release()
             time.sleep(2)
             continue
