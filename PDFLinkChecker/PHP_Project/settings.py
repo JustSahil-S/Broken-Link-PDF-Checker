@@ -78,7 +78,7 @@ if not os.environ.get('DATA_DIR'):
     print("DATA_DIR not defined!")
     exit(1)
 DATA_DIR = os.environ['DATA_DIR']
-print(f'DATA_DIR is set to {DATA_DIR}')
+#print(f'DATA_DIR is set to {DATA_DIR}')
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

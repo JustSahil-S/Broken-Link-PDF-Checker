@@ -48,7 +48,15 @@ then
 
     python manage.py makemigrations
     python manage.py migrate
+    echo "################################"
+    echo "#     Creating Super User      #"
+    echo "################################"
     python manage.py createsuperuser
+    python manage.py runserver 0.0.0.0:$INST_UIPORT
+else
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py runserver 0.0.0.0:$INST_UIPORT
 fi
 
 :'
@@ -72,4 +80,3 @@ else
     exit 1
 fi
 '
-python manage.py runserver 0.0.0.0:$INST_UIPORT
