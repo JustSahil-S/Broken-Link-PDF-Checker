@@ -8,6 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+RUN chmod a+x docker_run.sh
 
-CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
+EXPOSE 8000
+CMD ["bash", "-c", "/app/docker_edge_run.sh"]
+#CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
