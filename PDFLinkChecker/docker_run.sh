@@ -29,7 +29,7 @@ fi
 if [ -z "$DATA_DIR" ]
 then
     export DATA_DIR=$DEF_DATA_DIR
-
+fi
 if [ ! -d $DATA_DIR ]
 then
     echo $DATA_DIR "not mounted!!!"
