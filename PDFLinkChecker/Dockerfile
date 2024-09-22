@@ -10,6 +10,6 @@ COPY . .
 
 RUN chmod a+x docker_run.sh
 
-EXPOSE 8000
+EXPOSE 80
 CMD ["bash", "-c", "/app/docker_run.sh"]
-#CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
+#CMD ["python", "manage.py", "runserver", "127.0.0.1:80"]
