@@ -50,3 +50,6 @@ Open PDF preview when user clicks on a pdf link or pdf file path
 
 ### Link resolution management (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/33)
 Assign broken links to user for fixing and track progress
+
+### Report redirecting referrer links (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/32)
+Report referrer links redirecting to own website to improve page loading and SEO
