@@ -40,5 +40,12 @@ Creating initial superuser/admin account:
 python manage.py createsuperuser
 ```
 
-## Docker based installation (Recommended)
+### Docker based installation (Recommended)
 Dockerfile and docker_run.sh script simplify installation process.  Check these files for inline comments with example of commands to use for building docker image and running containerized application.
+
+## Feature Roadmap
+
+### PDF preview (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/26)
+Open PDF preview when user clicks on a pdf link or pdf file path
+
+### 
