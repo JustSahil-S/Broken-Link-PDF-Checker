@@ -48,4 +48,5 @@ Dockerfile and docker_run.sh script simplify installation process.  Check these 
 ### PDF preview (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/26)
 Open PDF preview when user clicks on a pdf link or pdf file path
 
-### 
+### Link resolution management (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/33)
+Assign broken links to user for fixing and track progress
