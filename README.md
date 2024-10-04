@@ -45,17 +45,21 @@ Dockerfile and docker_run.sh script simplify installation process.  Check these 
 
 ## Feature Roadmap
 
-### 1. PDF preview (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/26)
+### 1. Filter link entries (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/36)
+Filter based on PDF source, status code, etc, to show links matching criteria 
+
+### 2. PDF preview (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/26)
 Open PDF preview when user clicks on a pdf link or pdf file path
 
-### 2. Link resolution management (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/33)
+### 3. Web crawling (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/21)
+Support web crawling to find and process PDF documents
+
+### 4. Link resolution management (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/33)
 Assign broken links to user for fixing and track progress
 
-### 3. Report redirecting referrer links (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/32)
+### 5. Report redirecting referrer links (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/32)
 Report referrer links redirecting to own website to improve page loading and SEO
 
 ### 4. Web crawling (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/21)
 Support web crawling to find and process PDF documents
 
-### 5. Filter link entries (https://github.com/JustSahil-S/Broken-Link-PDF-Checker/issues/36)
-Filter based on PDF source, status code, etc, to show links matching criteria 
