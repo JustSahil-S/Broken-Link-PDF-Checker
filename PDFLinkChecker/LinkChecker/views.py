@@ -169,7 +169,7 @@ def get_first_link_instance(check_link, pdf):
 def get_all_links(pdf):
     # if multiple instances of a link exist, pick only the first and set moreInPdf to True
     uniqueLinks = {}
-    doc = fitz.open(pdf)
+    doc = fitz.open(pdf, filetype='pdf')
     for page_num in range(doc.page_count):
         try: 
             page = doc.load_page(page_num)

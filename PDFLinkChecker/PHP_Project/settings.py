@@ -76,8 +76,10 @@ WSGI_APPLICATION = "PHP_Project.wsgi.application"
 
 if not os.environ.get('DATA_DIR'):
     print("DATA_DIR not defined!")
-    exit(1)
-DATA_DIR = os.environ['DATA_DIR']
+    print(f'Choosing {BASE_DIR}')
+    DATA_DIR = str(BASE_DIR)
+else:
+    DATA_DIR = os.environ['DATA_DIR']
 #print(f'DATA_DIR is set to {DATA_DIR}')
 DATABASES = {
     "default": {
