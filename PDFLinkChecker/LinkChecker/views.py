@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 import fitz
 import requests
-import glob
+from pathlib import Path
 import datetime
 import time
 import os  
@@ -139,7 +139,8 @@ def cancelIgnoreAction(request, id):
 
 def get_all_pdfs():
     globals = Globals.objects.first()
-    return list(glob.iglob(globals.pdfDirectory+"/*", recursive=True))
+    #return list(glob.iglob(globals.pdfDirectory+"/*", recursive=True))
+    return list(Path(globals.pdfDirectory).rglob("*"))
 
 def get_first_link_instance(check_link, pdf):
     timesSeen = 0
@@ -428,7 +429,7 @@ def bgnd_task():
             globals = Globals.objects.first()
             current = globals.iteration + 1
         except Exception as e:
-            print('background task: got exception: {e}, releasing lock')
+            print(f'background task: got exception: {e}, releasing lock')
             checkallLock.release()
             time.sleep(2)
             continue
