@@ -2,11 +2,14 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 import threading
+import sys
 
+RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')
 
-bgnd_thread = threading.Thread(target=views.bgnd_task, args=[])
-bgnd_thread.setDaemon(True)
-bgnd_thread.start()
+if RUNNING_DEVSERVER:
+    bgnd_thread = threading.Thread(target=views.bgnd_task, args=[])
+    bgnd_thread.setDaemon(True)
+    bgnd_thread.start()
 
 
 
