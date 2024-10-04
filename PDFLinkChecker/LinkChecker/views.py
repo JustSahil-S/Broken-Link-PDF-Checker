@@ -225,10 +225,10 @@ def checkall_links(curIteration):
             continue
 
         if not is_pdf(pdf):
-            #print(f'Skipping non PDF! file: {pdf}')
+            print(f'Skipping non PDF! file: {pdf}')
             continue
 
-        # print(f'  Processing file {pdf}')
+        print(f'  Processing file {pdf}')
         print('+', end="", flush=True)
         links = get_all_links(pdf)
 
