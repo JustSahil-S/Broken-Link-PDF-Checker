@@ -333,32 +333,32 @@
             <ul class="nav nav-tabs" role="tablist" style="border: none; margin: 0 2%;">
                 {% if request.resolver_match.url_name == 'index' %}
                 <li class="nav-item"><a class="nav-link active" href="/" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    data-bs-title="Show links considered broken">Broken<span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
+                    data-bs-title="Show links considered broken">Broken <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="/" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    data-bs-title="Show links considered broken">Broken<span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
+                    data-bs-title="Show links considered broken">Broken <span id = "nav-broken" class="badge text-bg-secondary">{{ brokenCount }}</span></a></li>
                 {% endif %}
                 {% if request.resolver_match.url_name == 'dismiss' %}
                 <li class="nav-item"><a class="nav-link active" href="/dismiss" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                            data-bs-title="Show links monitored for status change">Dismissed<span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
+                            data-bs-title="Show links monitored for status change">Dismissed <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="/dismiss" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                            data-bs-title="Show links monitored for status change">Dismissed<span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
+                            data-bs-title="Show links monitored for status change">Dismissed <span id = "nav-dismiss" class="badge text-bg-secondary">{{ dismissCount }}</span></a></li>
                 {% endif %}
                 {% if request.resolver_match.url_name == 'ignore' %}
                 <li class="nav-item"><a class="nav-link active"  href="/ignore" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    data-bs-title="Show links ignored as likely not broken">Ignored<span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
+                    data-bs-title="Show links ignored as likely not broken">Ignored <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="/ignore" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    data-bs-title="Show links ignored as likely not broken">Ignored<span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
+                    data-bs-title="Show links ignored as likely not broken">Ignored <span id = "nav-ignore" class="badge text-bg-secondary">{{ ignoreCount }}</span></a></li>
                 {% endif %}
                 {% if request.resolver_match.url_name == 'all' %}
                 <li class="nav-item"><a class="nav-link active" href="/all" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        data-bs-title="Show all links">All<span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
+                        data-bs-title="Show all links">All <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
                 </li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="/all" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                        data-bs-title="Show all links">All<span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
+                        data-bs-title="Show all links">All <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
                 </li>
                 {% endif %}
             </ul>
