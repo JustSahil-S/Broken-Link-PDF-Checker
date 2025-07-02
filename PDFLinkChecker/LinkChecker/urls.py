@@ -33,4 +33,7 @@ urlpatterns = [
     path("cancelIgnoreAction/<str:id>", views.cancelIgnoreAction, name="actioncancelignore"),
     path("settings/<str:id>", views.settings, name="settings"),
     path("manage/", views.manage, name="manage"),
+    path("email/", views.email, name="email_excel"),
+    path("test/", views.test, name="test"),
+    path('get-pdf/<str:prefix>/<str:filename>', views.get_pdf, name='show_pdf_contents'),
 ]

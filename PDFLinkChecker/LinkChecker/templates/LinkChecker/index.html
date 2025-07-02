@@ -50,7 +50,7 @@
             }
         }
         a[target="_blank"]::after {
-            content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+            content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==); 
             margin: 0px 3px 0px 5px;
         }
             
@@ -379,6 +379,9 @@
                     data-bs-placement="bottom"><i class="fa-solid fa-user-group"></i></a>
             {% endif %}
             <a type="button" class="btn btn-danger" href="/download_excel" data-bs-toggle="tooltip" data-bs-title="Download table" data-bs-placement="bottom"><i class="fa-solid fa-download"></i></a>
+            {% if user.is_superuser %}
+            <a type="button" class="btn btn-danger" href="/email" data-bs-toggle="tooltip" data-bs-title="Email table" data-bs-placement="bottom"><i class="fa fa-envelope"></i></a>
+            {% endif %}
             <a type="button" class="btn btn-danger" href="/checkall" style="padding-left: 20px; padding-right: 20px;"
                 onclick="load()"  data-bs-toggle="tooltip" data-bs-title="Scan all PDF for broken links" data-bs-placement="bottom">
                 <span class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"
@@ -406,7 +409,7 @@
                      <p class="smallest">{{ link.reason }}</p>
                 </td>
                 <td> {{ link.urlText }}</td>
-                <td> {{ link.pdfSource }}</td>
+                <td> <a href="/get-pdf/{{ link.pdfSource }}" target="_blank"> {{ link.pdfSource }} </a> </td>
             </tr>
             <tr style="display: none; background-color: lightgray;" id="details{{ link.id }}">
                 <td>

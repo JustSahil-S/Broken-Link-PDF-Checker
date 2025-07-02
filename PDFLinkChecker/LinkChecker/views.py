@@ -32,6 +32,8 @@ from django.db import IntegrityError
 from django.contrib import messages
 from .forms import UserRegisterForm, UserProfileForm
 from django.contrib.auth.forms import PasswordChangeForm
+from django.http import FileResponse
+
 
 
 
@@ -652,3 +654,63 @@ def smtpSettings_view(request):
         form = SmtpSettingsForm(instance=globals_instance)
     
     return render(request, 'LinkChecker/smtpSettings.html', {'form': form})
+
+@login_required
+def email(request):
+    attachmentFile = "PDFBrokenLinks.xlsx"
+    if os.path.exists(attachmentFile):
+        globals = Globals.objects.first()
+        server=smtplib.SMTP(globals.smtpHost, globals.smtpPort)
+        server.starttls()
+        server.login(globals.smtpUsername, globals.smtpPassword)
+        for to_email in globals.sendToEmails.split(','):
+            msg = MIMEMultipart()
+            msg['Subject']='PDF Broken Link Report'
+            msg['From']=globals.fromEmail
+            msg['To'] = to_email
+            mail_body = """\
+                    This is an automated report, sent from PDF Broken Link Checker.
+                    
+                    To disable email notifications, click <Settings> on PDF Broken Link Checker
+
+                    """
+            msg.attach(MIMEText(mail_body, "plain"))
+            print(f'adding attachment to email')
+            attachment = open(attachmentFile, 'rb')
+            xlsx = MIMEBase('application','vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            xlsx.set_payload(attachment.read())
+            encoders.encode_base64(xlsx)
+            xlsx.add_header('Content-Disposition', 'attachment', filename="PDFBrokenLinks.xlsx")
+            msg.attach(xlsx)
+            server.sendmail(globals.fromEmail, to_email, msg.as_string())
+            print(f'sent email')
+            server.quit()
+            attachment.close()
+            return HttpResponseRedirect("/")
+    else:
+        return HttpResponse("Error")
+        
+@login_required
+def test(request):
+        globals = Globals.objects.first()
+        server=smtplib.SMTP(globals.smtpHost, globals.smtpPort)
+        server.starttls()
+        server.login(globals.smtpUsername, globals.smtpPassword)
+        for to_email in globals.sendToEmails.split(','):
+            msg = MIMEMultipart()
+            msg['Subject']='Verifying Advanced Email Settings'
+            msg['From']=globals.fromEmail
+            msg['To'] = to_email
+            mail_body = """\
+                    This is a test email.
+                    """
+            msg.attach(MIMEText(mail_body, "plain"))
+            server.sendmail(globals.fromEmail, to_email, msg.as_string())
+            print(f'sent email')
+        server.quit()
+        return HttpResponseRedirect("/smtpsettings")      
+
+@login_required
+def get_pdf(request, prefix, filename):
+    pdf_path = os.path.join(prefix, filename)    
+    return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
