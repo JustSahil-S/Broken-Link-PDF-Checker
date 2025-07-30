@@ -31,9 +31,13 @@ urlpatterns = [
     path("cancelDismissAction/<str:id>", views.cancelDismissAction, name="actiondismissignore"),
     path("ignoreAction/<str:id>", views.ignoreAction, name="actionignore"),
     path("cancelIgnoreAction/<str:id>", views.cancelIgnoreAction, name="actioncancelignore"),
-    path("settings/<str:id>", views.settings, name="settings"),
+    #path("settings/<str:id>", views.settings, name="settings"),
     path("manage/", views.manage, name="manage"),
     path("email/", views.email, name="email_excel"),
     path("test/", views.test, name="test"),
-    path('get-pdf/<str:prefix>/<str:filename>', views.get_pdf, name='show_pdf_contents'),
+    path('get-pdf/<int:id>', views.get_pdf, name='show_pdf_contents'),
+    path('filterStatus/<int:status>', views.filterStatus, name='filter_status'),
+    path('search', views.search, name='search'),
+
+
 ]

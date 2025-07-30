@@ -361,6 +361,15 @@
                         data-bs-title="Show all links">All <span id="nav-all" class="badge text-bg-secondary">{{ allCount }}</span></a>
                 </li>
                 {% endif %}
+                {% if request.resolver_match.url_name == 'search' %}
+                <li class="nav-item"><a class="nav-link active" href="/search" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        data-bs-title="Show all links"> <i class="fa-solid fa-magnifying-glass"></i> </a>
+                </li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="/search" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        data-bs-title="Show all links"> <i class="fa-solid fa-magnifying-glass"></i> </a>
+                </li>
+                {% endif %}
             </ul>
         {% if user.is_superuser %}
             <span class="btn"><b>User:&nbsp;&nbsp;</b>{{ request.user.username }} &nbsp;(admin)</span>
@@ -409,7 +418,7 @@
                      <p class="smallest">{{ link.reason }}</p>
                 </td>
                 <td> {{ link.urlText }}</td>
-                <td> <a href="/get-pdf/{{ link.pdfSource }}" target="_blank"> {{ link.pdfSource }} </a> </td>
+                <td> <a href="/get-pdf/{{ link.id }}" target="_blank"> {{ link.pdfSource }} </a> </td>
             </tr>
             <tr style="display: none; background-color: lightgray;" id="details{{ link.id }}">
                 <td>

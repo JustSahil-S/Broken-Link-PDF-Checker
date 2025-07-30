@@ -60,6 +60,7 @@ def broken(request):
         "globals": Globals.objects.first()
     })
 
+
 @login_required
 def all(request):
     return render(request, "LinkChecker/index.html", {
@@ -86,6 +87,17 @@ def dismiss(request):
         "ignoreCount":Links_table.objects.filter(ignore=True).count(),
         "globals": Globals.objects.first()
 
+    })
+
+@login_required
+def filterStatus(request, status):
+    return render(request, "LinkChecker/index.html", {
+        "links":Links_table.objects.filter(statusCode=status),
+        "allCount":Links_table.objects.all().count(),
+        "brokenCount":Links_table.objects.filter(broken=True).count(),
+        "dismissCount":Links_table.objects.filter(dismiss=True).count(),
+        "ignoreCount":Links_table.objects.filter(ignore=True).count(),
+        "globals": Globals.objects.first()
     })
 
 @login_required
@@ -469,7 +481,7 @@ def checkall(request):
     checkallLock.release()
     return HttpResponseRedirect("/")
 
-@login_required 
+""" @login_required 
 def settings(request, id):
     object = Globals.objects.first()
     if id == "directory":
@@ -495,7 +507,7 @@ def settings(request, id):
             object.emailNotifyOnNewLink = False
         object.emailAddress = request.POST["emailadd"]
         object.save()
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/") """
 
 
 @login_required 
@@ -711,6 +723,10 @@ def test(request):
         return HttpResponseRedirect("/smtpsettings")      
 
 @login_required
-def get_pdf(request, prefix, filename):
-    pdf_path = os.path.join(prefix, filename)    
+def get_pdf(request, id):
+    pdf_path = Links_table.objects.get(id=id).pdfSource
     return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+
+@login_required
+def search(request):
+        return render(request, 'LinkChecker/search.html')
